@@ -12,13 +12,24 @@ uploaded_file = st.file_uploader("📂 อัปโหลดไฟล์ Excel",
 
 def find_q_group(base_question, sheets_data):
     base = base_question.strip().lower()
+
     for df in sheets_data.values():
         if "standard_question_th" in df.columns and "q_group" in df.columns:
+            df = df.copy()
             df["standard_clean"] = df["standard_question_th"].astype(str).str.strip().str.lower()
-            matched = df[df["standard_clean"].apply(lambda x: x in base or base in x)]
-            if not matched.empty:
-                return str(matched.iloc[0]["q_group"])
+
+            # ลอง exact match ก่อน
+            exact_match = df[df["standard_clean"] == base]
+            if not exact_match.empty:
+                return str(exact_match.iloc[0]["q_group"])
+
+            # ถ้าไม่เจอ ให้ลอง contains match
+            partial_match = df[df["standard_clean"].apply(lambda x: base in x or x in base)]
+            if not partial_match.empty:
+                return str(partial_match.iloc[0]["q_group"])
+
     return "N/A"
+
 
 if uploaded_file:
     xls = pd.ExcelFile(uploaded_file)
