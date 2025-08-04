@@ -4,134 +4,122 @@ from io import BytesIO
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib import colors
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from rapidfuzz import fuzz
+import os
+import re
 
 st.set_page_config(page_title="Survey Column Builder", layout="wide")
-st.title("📋 สร้าง Excel และ PDF จากแบบสอบถาม (พร้อมจำนวนและกลุ่ม)")
+st.title("📋 สร้าง Excel และ PDF จากแบบสอบถาม (พร้อมจำนวนและกลุ่ม + Cross Product)")
 
 uploaded_file = st.file_uploader("📂 อัปโหลดไฟล์ Excel", type=["xlsx"])
 
 FUZZY_MATCH_THRESHOLD = 80
-import re
 
+# === Utility ===
 def clean_question(text):
     text = text.strip().lower()
-    text = re.sub(r"\d+$", "", text)  # ลบเลขที่ต่อท้าย
+    text = re.sub(r"\d+$", "", text)
     return text
 
 def find_q_group(base_question, sheets_data):
     base = clean_question(base_question)
     best_score = 0
     best_group = "N/A"
-
     for df in sheets_data.values():
         if "standard_question_th" in df.columns and "q_group" in df.columns:
             df = df.copy()
             df["standard_clean"] = df["standard_question_th"].astype(str).apply(clean_question)
-
             for _, row in df.iterrows():
                 ref_q = row["standard_clean"]
-                score = max(
-                    fuzz.partial_ratio(base, ref_q),
-                    fuzz.token_sort_ratio(base, ref_q)
-                )
+                score = max(fuzz.partial_ratio(base, ref_q), fuzz.token_sort_ratio(base, ref_q))
                 if score > best_score and score >= FUZZY_MATCH_THRESHOLD:
                     best_score = score
                     best_group = str(row["q_group"])
-
     return best_group
-
 
 if uploaded_file:
     xls = pd.ExcelFile(uploaded_file)
     valid_sheets = [sheet for sheet in xls.sheet_names if sheet.lower() != "lift"]
     sheets_data = {sheet: xls.parse(sheet) for sheet in valid_sheets}
 
-    selected_questions = []
+    product_list_df = sheets_data.get("Product List")
+    product_detail_df = sheets_data.get("Product & Details")
 
-    for sheet_name, df in sheets_data.items():
-        if "standard_question_th" not in df.columns:
-            continue
+    selected_products = []
+    selected_detail_questions = []
 
-        st.markdown(f"### 🗂️ {sheet_name}")
-        for i, row in df.iterrows():
-            question = str(row["standard_question_th"])
-            if pd.notna(question) and question.strip():
-                key = f"{sheet_name}_{i}"
-                if st.checkbox(question, key=key):
+    # === เลือก Product ===
+    if product_list_df is not None:
+        st.header("📦 เลือกผลิตภัณฑ์ (Product List)")
+        for i, row in product_list_df.iterrows():
+            prod_th = str(row["standard_question_th"])
+            if pd.notna(prod_th) and prod_th.strip():
+                key = f"product_{i}"
+                if st.checkbox(prod_th, key=key):
                     qty = st.number_input(
-                        f"🔢 จำนวนคอลัมน์สำหรับ: {question[:40]}...",
-                        min_value=1,
-                        max_value=20,
-                        value=1,
-                        step=1,
-                        key=f"{key}_qty"
-                    )
-                    selected_questions.append({
-                        "Question": question,
-                        "Quantity": qty
-                    })
+                        f"🔢 จำนวนสำหรับ {prod_th[:30]}",
+                        min_value=1, max_value=20, value=1, step=1,
+                        key=f"{key}_qty")
+                    selected_products.append({"name": prod_th.strip(), "qty": qty})
 
-    if selected_questions:
-        st.success(f"✅ เลือกทั้งหมด {len(selected_questions)} คำถาม")
+    # === เลือกคำถามจาก Product & Details ===
+    if product_detail_df is not None:
+        st.header("📋 เลือกคำถามประกอบผลิตภัณฑ์ (Product & Details)")
+        for i, row in product_detail_df.iterrows():
+            detail_q = str(row["standard_question_th"])
+            if pd.notna(detail_q) and detail_q.strip():
+                key = f"detail_{i}"
+                if st.checkbox(detail_q, key=key):
+                    selected_detail_questions.append(detail_q.strip())
+
+    # ปุ่มทำงาน
+    if selected_products and selected_detail_questions:
+        st.success(f"✅ เลือกสินค้า {len(selected_products)} รายการ และคำถาม {len(selected_detail_questions)} ข้อ")
 
         if st.button("📥 สร้างและดาวน์โหลดไฟล์ Excel + PDF"):
-            
-            # ===== เตรียมข้อมูล header และ PDF พร้อมกัน =====
+            columns = []
             qgroup_row = []
             question_row = []
             pdf_rows = []
 
-            for q in selected_questions:
-                base_question = q["Question"].strip()
+            for product in selected_products:
+                prod_name = product["name"]
+                qty = product["qty"]
+                for i in range(1, qty + 1):
+                    for detail_q in selected_detail_questions:
+                        combined_q = f"{prod_name}-{detail_q}#{i}"
+                        columns.append(combined_q)
+                        qgroup_row.append("Product Details")
+                        question_row.append(combined_q)
+                        pdf_rows.append(["Product Details", combined_q, ""])
 
-                q_group = find_q_group(base_question, sheets_data)
-
-                for i in range(1, q["Quantity"] + 1):
-                    numbered_q = f"{base_question}{i if q['Quantity'] > 1 else ''}"
-                    qgroup_row.append(q_group)
-                    question_row.append(numbered_q)
-                    pdf_rows.append([q_group, numbered_q, ""])
-
-            # ===== สร้าง DataFrame แบบไม่ใส่ .columns (ป้องกันคำถามซ้ำ) =====
+            # Excel Header
             multi_header_df = pd.DataFrame([qgroup_row, question_row])
-
-            # (Optional) เติมแถวเปล่าให้กรอก
-            empty_rows = pd.DataFrame([[""] * len(question_row) for _ in range(5)])
+            empty_rows = pd.DataFrame([[""] * len(columns) for _ in range(5)])
             multi_header_df = pd.concat([multi_header_df, empty_rows], ignore_index=True)
+
             st.markdown("### 🧾 ตัวอย่างแบบสอบถาม (Excel)")
             st.dataframe(multi_header_df.head(5))
 
-            # ===== Export Excel =====
+            # Export Excel
             excel_buffer = BytesIO()
             with pd.ExcelWriter(excel_buffer, engine="openpyxl") as writer:
                 multi_header_df.to_excel(writer, sheet_name="Survey Template", index=False)
-            
+            st.download_button("⬇️ ดาวน์โหลด Excel", data=excel_buffer.getvalue(), file_name="survey_template.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
-            st.download_button(
-                label="⬇️ ดาวน์โหลด Excel",
-                data=excel_buffer.getvalue(),
-                file_name="survey_template.xlsx",
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
-
+            # Export PDF
             st.markdown("### 🔍 ตัวอย่างแบบสอบถาม (PDF)")
             preview_df = pd.DataFrame(pdf_rows[:5], columns=["Group", "Question", "Answer"])
             st.dataframe(preview_df)
 
-            # ===== สร้าง PDF =====
-            from reportlab.pdfbase import pdfmetrics
-            from reportlab.pdfbase.ttfonts import TTFont
-            import os
-
-            # กำหนด path ไปยังฟอนต์
+            # Font for Thai
             font_path = os.path.join("font", "THSarabun.ttf")
-
-            # ลงทะเบียนฟอนต์ใหม่
             pdfmetrics.registerFont(TTFont("THSarabun", font_path))
 
-            pdf_rows.sort(key=lambda x: x[0])  # sort by q_group
-            table_data = [["group", "standard_question_th", "Answer"]] + pdf_rows
+            pdf_rows.sort(key=lambda x: x[1])
+            table_data = [["Group", "Question", "Answer"]] + pdf_rows
             row_heights = [25] + [60] * len(pdf_rows)
 
             pdf_buffer = BytesIO()
@@ -149,11 +137,7 @@ if uploaded_file:
             ]))
             doc.build([table])
 
-            st.download_button(
-                label="⬇️ ดาวน์โหลด PDF",
-                data=pdf_buffer.getvalue(),
-                file_name="survey_questions_structured.pdf",
-                mime="application/pdf"
-            )
+            st.download_button("⬇️ ดาวน์โหลด PDF", data=pdf_buffer.getvalue(), file_name="survey_questions_structured.pdf", mime="application/pdf")
+
     else:
-        st.info("⚠️ กรุณาเลือกคำถามก่อนสร้างไฟล์")
+        st.info("⚠️ กรุณาเลือกผลิตภัณฑ์และคำถามก่อน")
