@@ -249,6 +249,9 @@ if uploaded_file:
         ]))
         doc.build([table])
 
+        # ✅ Preview Excel แนวตั้งใน Streamlit
+        st.markdown("### 📋 ตัวอย่าง (Excel แนวตั้ง)")
+        st.dataframe(df_vertical.head(10))
         st.download_button("🔽️ ดาวน์โหลด PDF", data=pdf_buffer.getvalue(), file_name="survey_questions_structured.pdf", mime="application/pdf")
         # ✅ Excel แนวตั้ง (แบบ PDF) + ลำดับ
         df_vertical = pd.DataFrame(pdf_rows, columns=["Group", "Question", "Answer"])
@@ -267,9 +270,7 @@ if uploaded_file:
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
 
-        # ✅ Preview Excel แนวตั้งใน Streamlit
-        st.markdown("### 📋 ตัวอย่าง (Excel แนวตั้ง)")
-        st.dataframe(df_vertical.head(10))
 
 else:
     st.info("📌 กรุณาอัปโหลด Excel เพื่อเริ่ม")
+
