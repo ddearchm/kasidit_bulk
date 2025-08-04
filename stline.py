@@ -88,14 +88,14 @@ if uploaded_file:
             # (Optional) เติมแถวเปล่าให้กรอก
             empty_rows = pd.DataFrame([[""] * len(question_row) for _ in range(5)])
             multi_header_df = pd.concat([multi_header_df, empty_rows], ignore_index=True)
-
+            st.markdown("### 🧾 ตัวอย่างแบบสอบถาม (Excel)")
+            st.dataframe(multi_header_df.head(5))
+            
             # ===== Export Excel =====
             excel_buffer = BytesIO()
             with pd.ExcelWriter(excel_buffer, engine="openpyxl") as writer:
                 multi_header_df.to_excel(writer, sheet_name="Survey Template", index=False)
-            st.markdown("### 🧾 ตัวอย่างแบบสอบถาม (Excel)")
-            st.dataframe(multi_header_df.head(5))
-
+            
 
             st.download_button(
                 label="⬇️ ดาวน์โหลด Excel",
