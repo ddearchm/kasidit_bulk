@@ -121,6 +121,8 @@ if uploaded_file:
 
         # ✅ Role sheet: คอลัมน์แรก
         role_df = sheets_data.get("Role")
+        grouped_questions_by_group = {}
+        unmatched_questions = []
         if role_df is not None:
             for _, row in role_df.iterrows():
                 q = str(row.get("standard_question_th", "")).strip()
@@ -242,4 +244,5 @@ if uploaded_file:
 
 else:
     st.info("📌 กรุณาอัปโหลด Excel เพื่อเริ่ม")
+
 
