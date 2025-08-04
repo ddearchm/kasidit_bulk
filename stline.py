@@ -119,7 +119,7 @@ if uploaded_file:
         columns, qgroup_row, question_row, pdf_rows = [], [], [], []
         seen_labels.clear()
 
-        # ✅ ใส่คำถามจาก Sheet 'Role' เป็นคอลัมน์แรก
+        # ✅ Role sheet: คอลัมน์แรก
         role_df = sheets_data.get("Role")
         if role_df is not None:
             for _, row in role_df.iterrows():
@@ -132,7 +132,7 @@ if uploaded_file:
                     question_row.append(label)
                     pdf_rows.append([g if g else "N/A", label, ""])
 
-        # ✅ แยก group: matched และ unmatched
+        # ✅ Group questions: matched vs unmatched
         grouped_questions_by_group = {}
         unmatched_questions = []
         for q in selected_questions:
@@ -168,6 +168,7 @@ if uploaded_file:
                         question_row.append(label)
                         pdf_rows.append([group, label, ""])
 
+        # ✅ จัดกลุ่มที่เหลือ (ไม่รวม N/A)
         for group in grouped_questions_by_group:
             if group not in already_handled and group != "N/A":
                 for item in grouped_questions_by_group[group]:
@@ -189,7 +190,7 @@ if uploaded_file:
                 question_row.append(label)
                 pdf_rows.append(["N/A", label, ""])
 
-        # ✅ Cross Product Logic
+        # ✅ Cross Product
         if is_cross and selected_products and selected_details:
             for prod in selected_products:
                 for i in range(1, prod["qty"] + 1):
@@ -200,7 +201,7 @@ if uploaded_file:
                         question_row.append(label)
                         pdf_rows.append(["Product & Details", label, ""])
 
-        # สร้างไฟล์
+        # ✅ Create Excel & PDF
         header_df = pd.DataFrame([qgroup_row, question_row])
         empty = pd.DataFrame([[""] * len(columns) for _ in range(5)])
         final_df = pd.concat([header_df, empty], ignore_index=True)
@@ -240,4 +241,3 @@ if uploaded_file:
 
 else:
     st.info("📌 กรุณาอัปโหลด Excel เพื่อเริ่ม")
-
