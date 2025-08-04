@@ -132,16 +132,17 @@ if uploaded_file:
                     question_row.append(label)
                     pdf_rows.append([g if g else "N/A", label, ""])
 
-        # ✅ Group questions by q_group
-        grouped_questions = {}
+        # ✅ แยก group: matched และ unmatched
+        grouped_questions_by_group = {}
+        unmatched_questions = []
         for q in selected_questions:
             base_q = q["Question"]
             group = find_q_group(base_q, sheets_data)
-            grouped_questions.setdefault(group, []).append({
-                "question": base_q,
-                "qty": q["Quantity"],
-                "group": group
-            })
+            item = {"question": base_q, "qty": q["Quantity"], "group": group}
+            if group == "N/A":
+                unmatched_questions.append(item)
+            else:
+                grouped_questions_by_group.setdefault(group, []).append(item)
 
         # ✅ ลำดับที่ต้องการ
         preferred_qgroup_order = [
@@ -155,13 +156,11 @@ if uploaded_file:
         ]
 
         already_handled = set()
-
         for group in preferred_qgroup_order:
-            if group in grouped_questions:
+            if group in grouped_questions_by_group:
                 already_handled.add(group)
-                for item in grouped_questions[group]:
-                    base_q = item["question"]
-                    qty = item["qty"]
+                for item in grouped_questions_by_group[group]:
+                    base_q, qty = item["question"], item["qty"]
                     for i in range(1, qty + 1):
                         label = generate_unique_label(base_q, i, qty)
                         columns.append(label)
@@ -169,17 +168,26 @@ if uploaded_file:
                         question_row.append(label)
                         pdf_rows.append([group, label, ""])
 
-        for group in grouped_questions:
+        for group in grouped_questions_by_group:
             if group not in already_handled:
-                for item in grouped_questions[group]:
-                    base_q = item["question"]
-                    qty = item["qty"]
+                for item in grouped_questions_by_group[group]:
+                    base_q, qty = item["question"], item["qty"]
                     for i in range(1, qty + 1):
                         label = generate_unique_label(base_q, i, qty)
                         columns.append(label)
                         qgroup_row.append(group)
                         question_row.append(label)
                         pdf_rows.append([group, label, ""])
+
+        # ✅ unmatched ไปท้ายสุด
+        for item in unmatched_questions:
+            base_q, qty = item["question"], item["qty"]
+            for i in range(1, qty + 1):
+                label = generate_unique_label(base_q, i, qty)
+                columns.append(label)
+                qgroup_row.append("N/A")
+                question_row.append(label)
+                pdf_rows.append(["N/A", label, ""])
 
         # ✅ Cross Product Logic
         if is_cross and selected_products and selected_details:
@@ -232,4 +240,3 @@ if uploaded_file:
 
 else:
     st.info("📌 กรุณาอัปโหลด Excel เพื่อเริ่ม")
-
