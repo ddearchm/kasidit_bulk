@@ -30,7 +30,11 @@ def find_q_group(base_question, sheets_data):
             df["standard_clean"] = df["standard_question_th"].astype(str).apply(clean_question)
 
             for _, row in df.iterrows():
-                score = fuzz.partial_ratio(base, row["standard_clean"])
+                ref_q = row["standard_clean"]
+                score = max(
+                    fuzz.partial_ratio(base, ref_q),
+                    fuzz.token_sort_ratio(base, ref_q)
+                )
                 if score > best_score and score >= FUZZY_MATCH_THRESHOLD:
                     best_score = score
                     best_group = str(row["q_group"])
@@ -153,4 +157,3 @@ if uploaded_file:
             )
     else:
         st.info("⚠️ กรุณาเลือกคำถามก่อนสร้างไฟล์")
-
