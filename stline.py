@@ -19,10 +19,10 @@ uploaded_file = st.file_uploader("📂 อัปโหลดไฟล์ Excel",
 # 🎯 SETTING
 FUZZY_MATCH_THRESHOLD = 80
 
-# 🔧 CLEAN & MATCH UTILITIES
+# 🔧 UTILITIES
 def clean_question(text):
     text = text.strip().lower()
-    text = re.sub(r"\d+$", "", text)  # ตัดเลขท้าย
+    text = re.sub(r"\d+$", "", text)
     return text
 
 def find_q_group(base_question, sheets_data):
@@ -41,32 +41,24 @@ def find_q_group(base_question, sheets_data):
                     best_group = str(row["q_group"])
     return best_group
 
-# 🧠 MAIN LOGIC
+# 🧠 MAIN
 if uploaded_file:
     xls = pd.ExcelFile(uploaded_file)
     valid_sheets = [s for s in xls.sheet_names if s.lower() not in ["lift"]]
     sheets_data = {sheet: xls.parse(sheet) for sheet in valid_sheets}
 
+    # ==== CROSS MODE ====
     is_cross = "Product List" in sheets_data and "Product & Details" in sheets_data
-
-    # 🧠 STATE INITIALIZATION
-    if "selected_questions" not in st.session_state:
-        st.session_state.selected_questions = []
-    if "selected_details" not in st.session_state:
-        st.session_state.selected_details = []
-
-    selected_questions = st.session_state.selected_questions
-    selected_details = st.session_state.selected_details
-
-    # 🟦 CROSS MODE
     selected_products = []
+    selected_details = []
+
     if is_cross:
         st.subheader("📦 เลือกผลิตภัณฑ์ (จาก Product List)")
         for i, row in sheets_data["Product List"].iterrows():
             q = str(row["standard_question_th"])
             if pd.notna(q) and q.strip():
                 if st.checkbox(q, key=f"prod_{i}"):
-                    qty = st.number_input(f"🔢 จำนวน: {q}", min_value=1, max_value=20, value=1, step=1, key=f"prod_qty_{i}")
+                    qty = st.number_input(f"🔢 จำนวน: {q}", min_value=1, max_value=20, value=1, step=1, key=f"qty_{i}")
                     selected_products.append({"name": q.strip(), "qty": qty})
 
         st.subheader("📋 คำถามจาก Product & Details")
@@ -76,17 +68,19 @@ if uploaded_file:
                 if st.checkbox(q, key=f"detail_{i}"):
                     selected_details.append(q.strip())
 
+        # 🧩 เพิ่ม custom Product Detail
         st.markdown("### ➕ เพิ่มคำถามประกอบสินค้า (Custom Product Details)")
-        custom_detail = st.text_input("กรอกคำถามสำหรับสินค้า", key="custom_detail_input")
+        custom_detail = st.text_input("กรอกคำถามสินค้า", key="custom_detail_input")
         if st.button("➕ เพิ่มใน Product Details"):
             if custom_detail.strip():
                 selected_details.append(custom_detail.strip())
-                st.success(f"เพิ่มคำถาม: {custom_detail.strip()}")
+                st.success(f"เพิ่ม: {custom_detail.strip()}")
             else:
                 st.warning("ต้องกรอกคำถามก่อน")
 
-    # 🟨 STANDARD MODE
+    # ==== STANDARD MODE ====
     st.subheader("📌 คำถามมาตรฐาน (Standard Questions)")
+    selected_questions = []
     for sheet_name, df in sheets_data.items():
         if sheet_name in ["Product List", "Product & Details"]: continue
         if "standard_question_th" not in df.columns: continue
@@ -99,14 +93,14 @@ if uploaded_file:
                     qty = st.number_input(f"🔢 จำนวน: {q[:30]}", min_value=1, max_value=20, value=1, step=1, key=f"{sheet_name}_{i}_qty")
                     selected_questions.append({"Question": q.strip(), "Quantity": qty})
 
+    # 🔧 เพิ่มคำถามเอง
     st.markdown("### ✍️ เพิ่มคำถามเอง (Custom Questions)")
-    custom_question = st.text_input("กรอกคำถามใหม่ที่ต้องการเพิ่ม", "")
-    custom_qty = st.number_input("จำนวนคอลัมน์", min_value=1, max_value=20, value=1, step=1, key="custom_qty")
-
+    custom_question = st.text_input("คำถามที่ต้องการเพิ่ม", key="custom_question_input")
+    custom_qty = st.number_input("จำนวนคอลัมน์", min_value=1, max_value=20, value=1, step=1, key="custom_question_qty")
     if st.button("➕ เพิ่มคำถามเข้า list"):
         if custom_question.strip():
             selected_questions.append({"Question": custom_question.strip(), "Quantity": custom_qty})
-            st.success(f"เพิ่มคำถาม: {custom_question.strip()}")
+            st.success(f"เพิ่ม: {custom_question.strip()}")
         else:
             st.warning("กรุณากรอกคำถามก่อน")
 
@@ -114,6 +108,7 @@ if uploaded_file:
     if st.button("📥 สร้างและดาวน์โหลด Excel + PDF"):
         columns, qgroup_row, question_row, pdf_rows = [], [], [], []
 
+        # STANDARD
         for q in selected_questions:
             base_q = q["Question"]
             group = find_q_group(base_q, sheets_data)
@@ -124,22 +119,23 @@ if uploaded_file:
                 question_row.append(label)
                 pdf_rows.append([group, label, ""])
 
+        # CROSS
         if is_cross and selected_products and selected_details:
-            for product in selected_products:
-                name, qty = product["name"], product["qty"]
-                for i in range(1, qty + 1):
-                    for detail_q in selected_details:
-                        label = f"{name}-{detail_q}#{i}"
+            for prod in selected_products:
+                for i in range(1, prod["qty"] + 1):
+                    for detail in selected_details:
+                        label = f"{prod['name']}-{detail}#{i}"
                         columns.append(label)
                         qgroup_row.append("Product Details")
                         question_row.append(label)
                         pdf_rows.append(["Product Details", label, ""])
 
+        # === OUTPUT PREVIEW ===
         header_df = pd.DataFrame([qgroup_row, question_row])
         empty = pd.DataFrame([[""] * len(columns) for _ in range(5)])
         final_df = pd.concat([header_df, empty], ignore_index=True)
 
-        st.markdown("### 🧾 ตัวอย่าง (Excel)")
+        st.markdown("### 🧾 ตัวอย่างแบบสอบถาม (Excel)")
         st.dataframe(final_df.head(5))
 
         excel_buffer = BytesIO()
@@ -147,16 +143,14 @@ if uploaded_file:
             final_df.to_excel(writer, sheet_name="Survey Template", index=False)
         st.download_button("⬇️ ดาวน์โหลด Excel", data=excel_buffer.getvalue(), file_name="survey_template.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
-        st.markdown("### 🔍 ตัวอย่าง (PDF)")
-        st.dataframe(pd.DataFrame(pdf_rows[:5], columns=["Group", "Question", "Answer"]))
+        st.markdown("### 🔍 ตัวอย่างแบบสอบถาม (PDF)")
+        preview_df = pd.DataFrame(pdf_rows[:5], columns=["Group", "Question", "Answer"])
+        st.dataframe(preview_df)
 
         font_path = os.path.join("font", "THSarabun.ttf")
         pdfmetrics.registerFont(TTFont("THSarabun", font_path))
-
-        pdf_rows.sort(key=lambda x: x[0])
         table_data = [["Group", "Question", "Answer"]] + pdf_rows
         row_heights = [25] + [60] * len(pdf_rows)
-
         pdf_buffer = BytesIO()
         doc = SimpleDocTemplate(pdf_buffer, pagesize=landscape(A4))
         table = Table(table_data, colWidths=[120, 280, 320], rowHeights=row_heights, repeatRows=1)
