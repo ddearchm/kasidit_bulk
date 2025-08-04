@@ -4,31 +4,31 @@ from io import BytesIO
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib import colors
+from rapidfuzz import fuzz
 
 st.set_page_config(page_title="Survey Column Builder", layout="wide")
 st.title("📋 สร้าง Excel และ PDF จากแบบสอบถาม (พร้อมจำนวนและกลุ่ม)")
 
 uploaded_file = st.file_uploader("📂 อัปโหลดไฟล์ Excel", type=["xlsx"])
 
+FUZZY_MATCH_THRESHOLD = 90
 def find_q_group(base_question, sheets_data):
     base = base_question.strip().lower()
+    best_score = 0
+    best_group = "N/A"
 
     for df in sheets_data.values():
         if "standard_question_th" in df.columns and "q_group" in df.columns:
             df = df.copy()
             df["standard_clean"] = df["standard_question_th"].astype(str).str.strip().str.lower()
 
-            # ลอง exact match ก่อน
-            exact_match = df[df["standard_clean"] == base]
-            if not exact_match.empty:
-                return str(exact_match.iloc[0]["q_group"])
+            for _, row in df.iterrows():
+                score = fuzz.partial_ratio(base, row["standard_clean"])
+                if score > best_score and score >= FUZZY_MATCH_THRESHOLD:  # ปรับ threshold ได้
+                    best_score = score
+                    best_group = str(row["q_group"])
 
-            # ถ้าไม่เจอ ให้ลอง contains match
-            partial_match = df[df["standard_clean"].apply(lambda x: base in x or x in base)]
-            if not partial_match.empty:
-                return str(partial_match.iloc[0]["q_group"])
-
-    return "N/A"
+    return best_group
 
 
 if uploaded_file:
@@ -93,6 +93,9 @@ if uploaded_file:
             excel_buffer = BytesIO()
             with pd.ExcelWriter(excel_buffer, engine="openpyxl") as writer:
                 multi_header_df.to_excel(writer, sheet_name="Survey Template", index=False)
+            st.markdown("### 🧾 ตัวอย่างแบบสอบถาม (Excel)")
+            st.dataframe(multi_header_df.head(5))
+
 
             st.download_button(
                 label="⬇️ ดาวน์โหลด Excel",
