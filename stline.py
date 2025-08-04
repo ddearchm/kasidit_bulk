@@ -75,11 +75,43 @@ if uploaded_file:
                     pdf_rows.append([q_group, numbered_q, ""])
 
             # ===== สร้าง Excel =====
-            df_out = pd.DataFrame(columns=columns)
+            # ===== สร้าง Excel แบบมี 2 แถวหัวตาราง =====
+            columns = []
+            qgroup_row = []
+            question_row = []
+
+            for q in selected_questions:
+                base_question = q["Question"].strip()
+
+                # หา group
+                q_group = "N/A"
+                for df in sheets_data.values():
+                    if "standard_question_th" in df.columns and "q_group" in df.columns:
+                        match = df[df["standard_question_th"] == base_question]
+                        if not match.empty:
+                            q_group = str(match.iloc[0]["q_group"])
+                            break
+
+                # สร้าง column ตามจำนวน
+                for i in range(1, q["Quantity"] + 1):
+                    col_name = f"{base_question}{i if q['Quantity'] > 1 else ''}"
+                    columns.append(col_name)
+                    qgroup_row.append(q_group)
+                    question_row.append(col_name)
+
+            # สร้าง DataFrame พร้อม header 2 ชั้น
+            multi_header_df = pd.DataFrame(columns=columns)
+            multi_header_df.loc[-2] = qgroup_row
+            multi_header_df.loc[-1] = question_row
+            multi_header_df.index = multi_header_df.index + 2
+            multi_header_df = multi_header_df.sort_index()
+
+            # Export to Excel
             excel_buffer = BytesIO()
             with pd.ExcelWriter(excel_buffer, engine="openpyxl") as writer:
-                df_out.to_excel(writer, sheet_name="Survey Template", index=False)
+                multi_header_df.to_excel(writer, sheet_name="Survey Template", index=False)
 
+            # ปุ่มโหลด
             st.download_button(
                 label="⬇️ ดาวน์โหลด Excel",
                 data=excel_buffer.getvalue(),
@@ -100,14 +132,16 @@ if uploaded_file:
 
             pdf_rows.sort(key=lambda x: x[0])  # sort by q_group
             table_data = [["group", "standard_question_th", "Answer"]] + pdf_rows
+            row_heights = [25] + [60] * len(pdf_rows)
 
             pdf_buffer = BytesIO()
             doc = SimpleDocTemplate(pdf_buffer, pagesize=landscape(A4))
-            table = Table(table_data, colWidths=[160, 400, 160])
+            table = Table(table_data, colWidths=[120, 280, 320], rowHeights=row_heights, repeatRows=1)
             table.setStyle(TableStyle([
                 ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
                 ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
                 ("ALIGN", (0, 0), (-1, -1), "LEFT"),
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
                 ("FONTNAME", (0, 0), (-1, -1), "THSarabun"),
                 ("FONTSIZE", (0, 0), (-1, -1), 14),
                 ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
@@ -123,5 +157,3 @@ if uploaded_file:
             )
     else:
         st.info("⚠️ กรุณาเลือกคำถามก่อนสร้างไฟล์")
-
-
