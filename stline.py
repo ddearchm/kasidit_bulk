@@ -249,15 +249,15 @@ if uploaded_file:
         ]))
         doc.build([table])
 
-        # ✅ Preview Excel แนวตั้งใน Streamlit
-        st.markdown("### 📋 ตัวอย่าง (Excel แนวตั้ง)")
-        st.dataframe(df_vertical.head(10))
         st.download_button("🔽️ ดาวน์โหลด PDF", data=pdf_buffer.getvalue(), file_name="survey_questions_structured.pdf", mime="application/pdf")
         # ✅ Excel แนวตั้ง (แบบ PDF) + ลำดับ
         df_vertical = pd.DataFrame(pdf_rows, columns=["Group", "Question", "Answer"])
         df_vertical.index += 1  # ให้เริ่มจาก 1
         df_vertical.reset_index(inplace=True)
         df_vertical.rename(columns={"index": "No."}, inplace=True)
+         # ✅ Preview Excel แนวตั้งใน Streamlit
+        st.markdown("### 📋 ตัวอย่าง (Excel แนวตั้ง)")
+        st.dataframe(df_vertical.head(10))
 
         excel_vertical_buffer = BytesIO()
         with pd.ExcelWriter(excel_vertical_buffer, engine="openpyxl") as writer:
@@ -270,7 +270,5 @@ if uploaded_file:
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
 
-
 else:
     st.info("📌 กรุณาอัปโหลด Excel เพื่อเริ่ม")
-
