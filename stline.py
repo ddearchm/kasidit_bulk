@@ -86,6 +86,7 @@ if uploaded_file:
             if st.button("➕ เพิ่มคำถามประกอบสินค้า"):
                 if custom_detail.strip():
                     st.session_state.custom_product_details.append(custom_detail.strip())
+                    st.success(f"✅ เพิ่มคำถามสินค้า \"{custom_detail.strip()}\" แล้วเรียบร้อย")
                 else:
                     st.warning("กรุณากรอกคำถาม")
 
@@ -128,6 +129,7 @@ if uploaded_file:
                     "Quantity": custom_q_qty,
                     "Group": custom_q_group if custom_q_group != "อื่นๆ" else "N/A"
                 })
+                st.success(f"✅ เพิ่มคำถาม \"{custom_q.strip()}\" เข้า group \"{custom_q_group}\" แล้ว!")
             else:
                 st.warning("กรุณากรอกคำถาม")
 
@@ -251,3 +253,4 @@ if uploaded_file:
 
 else:
     st.info("📌 กรุณาอัปโหลด Excel เพื่อเริ่ม")
+
