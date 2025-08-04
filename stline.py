@@ -20,7 +20,7 @@ if "custom_product_details" not in st.session_state:
     st.session_state.custom_product_details = []
 
 # 📂 FILE UPLOAD
-uploaded_file = st.file_uploader("📂 อัปโหลดไฟล์ Excel สำหรับเลือกคำถาม (Bulk, Bag, Subdealer, Contractor)", type=["xlsx"])
+uploaded_file = st.file_uploader("📂 อัปโหลดไฟล์ Excel สำหรับเลือกคำถาม", type=["xlsx"])
 
 # 🌟 FUZZY MATCH
 FUZZY_MATCH_THRESHOLD = 80
@@ -44,6 +44,18 @@ def find_q_group(base_question, sheets_data):
                     best_group = str(row["q_group"])
     return best_group
 
+# 🔐 ป้องกัน duplicate column names
+seen_labels = set()
+def generate_unique_label(base, i, qty):
+    raw = f"{base}#{i}" if qty > 1 else base
+    label = raw
+    count = 2
+    while label in seen_labels:
+        label = f"{raw}#{count}"
+        count += 1
+    seen_labels.add(label)
+    return label
+
 # 🧪 MAIN
 if uploaded_file:
     xls = pd.ExcelFile(uploaded_file)
@@ -54,7 +66,7 @@ if uploaded_file:
     selected_products, selected_details = [], []
 
     if is_cross:
-        st.subheader("📦 เลือกผลิตภัณฐ์ (Product List)")
+        st.subheader("📦 เลือกผลิตภัณฑ์ (Product List)")
         for i, row in sheets_data["Product List"].iterrows():
             q = str(row["standard_question_th"])
             if pd.notna(q) and q.strip():
@@ -93,26 +105,59 @@ if uploaded_file:
     with st.expander("✍️ เพิ่มคำถามเอง (Custom Questions)"):
         custom_q = st.text_input("กรอกคำถาม", key="custom_question_input")
         custom_q_qty = st.number_input("จำนวนคอลัมน์", 1, 20, 1, 1, key="custom_question_qty")
+        custom_q_group = st.selectbox(
+            "เลือกกลุ่มคำถาม (q_group)",
+            options=[
+                "BUSINESS_TYPE",
+                "Respondent Profile",
+                "Customer & Market",
+                "Business & Strategy",
+                "Pain Points & Needs",
+                "Product & Process",
+                "Product & Details",
+                "Special Topic",
+                "อื่นๆ"
+            ],
+            index=1,
+            key="custom_question_group"
+        )
         if st.button("➕ เพิ่มคำถามมาตรฐาน"):
             if custom_q.strip():
-                st.session_state.custom_questions.append({"Question": custom_q.strip(), "Quantity": custom_q_qty})
+                st.session_state.custom_questions.append({
+                    "Question": custom_q.strip(),
+                    "Quantity": custom_q_qty,
+                    "Group": custom_q_group if custom_q_group != "อื่นๆ" else "N/A"
+                })
             else:
-                st.warning("กรุณากรอกแต่คำถาม")
+                st.warning("กรุณากรอกคำถาม")
 
     # รวม custom เข้าไปด้วย
-    selected_questions += st.session_state.custom_questions
+    for item in st.session_state.custom_questions:
+        selected_questions.append({
+            "Question": item["Question"],
+            "Quantity": item["Quantity"],
+            "Group": item.get("Group", "N/A")
+        })
     selected_details += st.session_state.custom_product_details
 
     if st.button("📅 สร้างและดาวน์โหลด Excel + PDF"):
         columns, qgroup_row, question_row, pdf_rows = [], [], [], []
-        # 🧠 Group questions by q_group
-        grouped_questions = {}
+        seen_labels.clear()
+
+        # ✅ Group questions
+        grouped_questions_by_group = {}
+        unmatched_questions = []
+
         for q in selected_questions:
             base_q = q["Question"]
-            group = find_q_group(base_q, sheets_data)
-            grouped_questions.setdefault(group, []).append((base_q, q["Quantity"]))
+            group = q.get("Group") or find_q_group(base_q, sheets_data)
+            item = {"question": base_q, "qty": q["Quantity"], "group": group}
+            if group == "N/A":
+                unmatched_questions.append(item)
+            else:
+                grouped_questions_by_group.setdefault(group, []).append(item)
 
-        # 🎯 ลำดับที่ต้องการ
+        # ✅ ลำดับ group ที่ต้องการ
         preferred_qgroup_order = [
             "BUSINESS_TYPE",
             "Respondent Profile",
@@ -124,38 +169,48 @@ if uploaded_file:
             "Special Topic"
         ]
 
-        # ✨ เพิ่มคำถามตามลำดับ group ที่กำหนด
+        already_handled = set()
         for group in preferred_qgroup_order:
-            if group in grouped_questions:
-                for base_q, qty in grouped_questions[group]:
+            if group in grouped_questions_by_group:
+                already_handled.add(group)
+                for item in grouped_questions_by_group[group]:
+                    base_q, qty = item["question"], item["qty"]
                     for i in range(1, qty + 1):
-                        label = f"{base_q}#{i}" if qty > 1 else base_q
+                        label = generate_unique_label(base_q, i, qty)
                         columns.append(label)
                         qgroup_row.append(group)
                         question_row.append(label)
                         pdf_rows.append([group, label, ""])
 
-        # 🧩 เผื่อมีคำถาม group อื่นที่ไม่อยู่ใน preferred_qgroup_order (จัดไว้ท้าย)
-        already_handled = set(preferred_qgroup_order)
-        for group in grouped_questions:
-            if group not in preferred_qgroup_order:
-                for base_q, qty in grouped_questions[group]:
+        for group in grouped_questions_by_group:
+            if group not in already_handled and group != "N/A":
+                for item in grouped_questions_by_group[group]:
+                    base_q, qty = item["question"], item["qty"]
                     for i in range(1, qty + 1):
-                        label = f"{base_q}#{i}" if qty > 1 else base_q
+                        label = generate_unique_label(base_q, i, qty)
                         columns.append(label)
                         qgroup_row.append(group)
                         question_row.append(label)
                         pdf_rows.append([group, label, ""])
-        
+
+        for item in unmatched_questions:
+            base_q, qty = item["question"], item["qty"]
+            for i in range(1, qty + 1):
+                label = generate_unique_label(base_q, i, qty)
+                columns.append(label)
+                qgroup_row.append("N/A")
+                question_row.append(label)
+                pdf_rows.append(["N/A", label, ""])
+
         if is_cross and selected_products and selected_details:
             for prod in selected_products:
                 for i in range(1, prod["qty"] + 1):
                     for detail in selected_details:
-                        label = f"{prod['name']}-{detail}#{i}"
+                        label = generate_unique_label(f"{prod['name']}-{detail}", i, prod["qty"])
                         columns.append(label)
-                        qgroup_row.append("Product Details")
+                        qgroup_row.append("Product & Details")
                         question_row.append(label)
-                        pdf_rows.append(["Product Details", label, ""])
+                        pdf_rows.append(["Product & Details", label, ""])
 
         header_df = pd.DataFrame([qgroup_row, question_row])
         empty = pd.DataFrame([[""] * len(columns) for _ in range(5)])
@@ -196,4 +251,3 @@ if uploaded_file:
 
 else:
     st.info("📌 กรุณาอัปโหลด Excel เพื่อเริ่ม")
-
