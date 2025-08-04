@@ -11,9 +11,9 @@ import os
 import re
 
 st.set_page_config(page_title="Survey Column Builder", layout="wide")
-st.title("📋 สร้าง Excel และ PDF จากแบบสอบถาม (พร้อมจำนวนและกลุ่ม + Cross Product)")
+st.title("📋 สร้าง Excel และ PDF สำหรับแบบสอบถาม")
 
-uploaded_file = st.file_uploader("📂 อัปโหลดไฟล์ Excel", type=["xlsx"])
+uploaded_file = st.file_uploader("📂 อัปโหลดไฟล์ Excel สำหรับสร้างแบบสอบถาม", type=["xlsx"])
 
 FUZZY_MATCH_THRESHOLD = 80
 
@@ -141,3 +141,4 @@ if uploaded_file:
 
     else:
         st.info("⚠️ กรุณาเลือกผลิตภัณฑ์และคำถามก่อน")
+
