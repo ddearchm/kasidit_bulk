@@ -124,12 +124,13 @@ if uploaded_file:
         if role_df is not None:
             for _, row in role_df.iterrows():
                 q = str(row.get("standard_question_th", "")).strip()
+                g = str(row.get("q_group", "")).strip()
                 if q:
                     label = generate_unique_label(q, 1, 1)
                     columns.append(label)
-                    qgroup_row.append("Respondent Profile")
+                    qgroup_row.append(g if g else "N/A")
                     question_row.append(label)
-                    pdf_rows.append(["Respondent Profile", label, ""])
+                    pdf_rows.append([g if g else "N/A", label, ""])
 
         # ✅ Group questions by q_group
         grouped_questions = {}
@@ -231,3 +232,4 @@ if uploaded_file:
 
 else:
     st.info("📌 กรุณาอัปโหลด Excel เพื่อเริ่ม")
+
