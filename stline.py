@@ -10,6 +10,16 @@ st.title("📋 สร้าง Excel และ PDF จากแบบสอบ�
 
 uploaded_file = st.file_uploader("📂 อัปโหลดไฟล์ Excel", type=["xlsx"])
 
+def find_q_group(base_question, sheets_data):
+    base = base_question.strip().lower()
+    for df in sheets_data.values():
+        if "standard_question_th" in df.columns and "q_group" in df.columns:
+            df["standard_clean"] = df["standard_question_th"].astype(str).str.strip().str.lower()
+            matched = df[df["standard_clean"].apply(lambda x: x in base or base in x)]
+            if not matched.empty:
+                return str(matched.iloc[0]["q_group"])
+    return "N/A"
+
 if uploaded_file:
     xls = pd.ExcelFile(uploaded_file)
     valid_sheets = [sheet for sheet in xls.sheet_names if sheet.lower() != "lift"]
@@ -53,16 +63,7 @@ if uploaded_file:
             for q in selected_questions:
                 base_question = q["Question"].strip()
 
-                # หา q_group โดยแมตช์แบบ flexible
-                q_group = "N/A"
-                for df in sheets_data.values():
-                    if "standard_question_th" in df.columns and "q_group" in df.columns:
-                        matched_rows = df[
-                            df["standard_question_th"].astype(str).str.strip().str.lower() == base_question.lower()
-                        ]
-                        if not matched_rows.empty:
-                            q_group = str(matched_rows.iloc[0]["q_group"])
-                            break
+                q_group = find_q_group(base_question, sheets_data)
 
                 for i in range(1, q["Quantity"] + 1):
                     numbered_q = f"{base_question}{i if q['Quantity'] > 1 else ''}"
@@ -89,6 +90,9 @@ if uploaded_file:
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
 
+            st.markdown("### 🔍 ตัวอย่างแบบสอบถาม (PDF)")
+            preview_df = pd.DataFrame(pdf_rows[:5], columns=["Group", "Question", "Answer"])
+            st.dataframe(preview_df)
 
             # ===== สร้าง PDF =====
             from reportlab.pdfbase import pdfmetrics
