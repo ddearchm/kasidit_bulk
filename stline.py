@@ -11,7 +11,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 from rapidfuzz import fuzz
 
 st.set_page_config(page_title="Survey Column Builder", layout="wide")
-st.title("📋 สร้าง Excel และ PDF จากแบบสอบถาม (Standard + Cross Product)")
+st.title("📋 สร้าง Excel และ PDF แบบสอบถาม")
 
 # 🎯 SETUP SESSION STATE
 if "custom_questions" not in st.session_state:
@@ -20,7 +20,7 @@ if "custom_product_details" not in st.session_state:
     st.session_state.custom_product_details = []
 
 # 📂 FILE UPLOAD
-uploaded_file = st.file_uploader("📂 อัปโหลดไฟล์ Excel", type=["xlsx"])
+uploaded_file = st.file_uploader("📂 อัปโหลดไฟล์ Excel สำหรับเลือกคำถาม (Bulk, Bag, Subdealer, Contractor)", type=["xlsx"])
 
 # 🌟 FUZZY MATCH
 FUZZY_MATCH_THRESHOLD = 80
@@ -196,3 +196,4 @@ if uploaded_file:
 
 else:
     st.info("📌 กรุณาอัปโหลด Excel เพื่อเริ่ม")
+
