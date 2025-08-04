@@ -56,7 +56,7 @@ if uploaded_file:
 
                               
                 # ===== หา q_group แค่ครั้งเดียวก่อนลูปจำนวน =====
-                
+
                 q_group = None
                 base_question = q["Question"].strip()
 
@@ -88,6 +88,16 @@ if uploaded_file:
             )
 
             # ===== สร้าง PDF =====
+            from reportlab.pdfbase import pdfmetrics
+            from reportlab.pdfbase.ttfonts import TTFont
+            import os
+
+            # กำหนด path ไปยังฟอนต์
+            font_path = os.path.join("fonts", "THSarabunNew.ttf")
+
+            # ลงทะเบียนฟอนต์ใหม่
+            pdfmetrics.registerFont(TTFont("THSarabun", font_path))
+
             pdf_rows.sort(key=lambda x: x[0])  # sort by q_group
             table_data = [["group", "standard_question_th", "Answer"]] + pdf_rows
 
@@ -98,7 +108,8 @@ if uploaded_file:
                 ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
                 ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
                 ("ALIGN", (0, 0), (-1, -1), "LEFT"),
-                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("FONTNAME", (0, 0), (-1, -1), "THSarabun"),
+                ("FONTSIZE", (0, 0), (-1, -1), 14),
                 ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
                 ("GRID", (0, 0), (-1, -1), 1, colors.black),
             ]))
