@@ -12,19 +12,26 @@ st.title("📋 สร้าง Excel และ PDF จากแบบสอบ�
 uploaded_file = st.file_uploader("📂 อัปโหลดไฟล์ Excel", type=["xlsx"])
 
 FUZZY_MATCH_THRESHOLD = 90
+import re
+
+def clean_question(text):
+    text = text.strip().lower()
+    text = re.sub(r"\d+$", "", text)  # ลบเลขที่ต่อท้าย
+    return text
+
 def find_q_group(base_question, sheets_data):
-    base = base_question.strip().lower()
+    base = clean_question(base_question)
     best_score = 0
     best_group = "N/A"
 
     for df in sheets_data.values():
         if "standard_question_th" in df.columns and "q_group" in df.columns:
             df = df.copy()
-            df["standard_clean"] = df["standard_question_th"].astype(str).str.strip().str.lower()
+            df["standard_clean"] = df["standard_question_th"].astype(str).apply(clean_question)
 
             for _, row in df.iterrows():
                 score = fuzz.partial_ratio(base, row["standard_clean"])
-                if score > best_score and score >= FUZZY_MATCH_THRESHOLD:  # ปรับ threshold ได้
+                if score > best_score and score >= FUZZY_MATCH_THRESHOLD:
                     best_score = score
                     best_group = str(row["q_group"])
 
@@ -90,7 +97,7 @@ if uploaded_file:
             multi_header_df = pd.concat([multi_header_df, empty_rows], ignore_index=True)
             st.markdown("### 🧾 ตัวอย่างแบบสอบถาม (Excel)")
             st.dataframe(multi_header_df.head(5))
-            
+
             # ===== Export Excel =====
             excel_buffer = BytesIO()
             with pd.ExcelWriter(excel_buffer, engine="openpyxl") as writer:
