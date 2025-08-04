@@ -169,7 +169,7 @@ if uploaded_file:
                         pdf_rows.append([group, label, ""])
 
         for group in grouped_questions_by_group:
-            if group not in already_handled:
+            if group not in already_handled and group != "N/A":
                 for item in grouped_questions_by_group[group]:
                     base_q, qty = item["question"], item["qty"]
                     for i in range(1, qty + 1):
@@ -240,3 +240,4 @@ if uploaded_file:
 
 else:
     st.info("📌 กรุณาอัปโหลด Excel เพื่อเริ่ม")
+
