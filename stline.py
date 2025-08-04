@@ -47,17 +47,21 @@ if uploaded_file:
     valid_sheets = [s for s in xls.sheet_names if s.lower() not in ["lift"]]
     sheets_data = {sheet: xls.parse(sheet) for sheet in valid_sheets}
 
-    # ✨ AUTO-DETECT CROSS MODE
     is_cross = "Product List" in sheets_data and "Product & Details" in sheets_data
 
-    # ประกาศตัวแปรไว้ก่อน
-    selected_products = []
-    selected_details = []
+    # 🧠 STATE INITIALIZATION
+    if "selected_questions" not in st.session_state:
+        st.session_state.selected_questions = []
+    if "selected_details" not in st.session_state:
+        st.session_state.selected_details = []
+
+    selected_questions = st.session_state.selected_questions
+    selected_details = st.session_state.selected_details
 
     # 🟦 CROSS MODE
+    selected_products = []
     if is_cross:
         st.subheader("📦 เลือกผลิตภัณฑ์ (จาก Product List)")
-        
         for i, row in sheets_data["Product List"].iterrows():
             q = str(row["standard_question_th"])
             if pd.notna(q) and q.strip():
@@ -66,13 +70,12 @@ if uploaded_file:
                     selected_products.append({"name": q.strip(), "qty": qty})
 
         st.subheader("📋 คำถามจาก Product & Details")
-        selected_details = []
         for i, row in sheets_data["Product & Details"].iterrows():
             q = str(row["standard_question_th"])
             if pd.notna(q) and q.strip():
                 if st.checkbox(q, key=f"detail_{i}"):
                     selected_details.append(q.strip())
-        # 🧩 เพิ่มคำถามใน Product & Details
+
         st.markdown("### ➕ เพิ่มคำถามประกอบสินค้า (Custom Product Details)")
         custom_detail = st.text_input("กรอกคำถามสำหรับสินค้า", key="custom_detail_input")
         if st.button("➕ เพิ่มใน Product Details"):
@@ -81,11 +84,9 @@ if uploaded_file:
                 st.success(f"เพิ่มคำถาม: {custom_detail.strip()}")
             else:
                 st.warning("ต้องกรอกคำถามก่อน")
-                
 
-    # 🟨 STANDARD QUESTION MODE
+    # 🟨 STANDARD MODE
     st.subheader("📌 คำถามมาตรฐาน (Standard Questions)")
-    selected_questions = []
     for sheet_name, df in sheets_data.items():
         if sheet_name in ["Product List", "Product & Details"]: continue
         if "standard_question_th" not in df.columns: continue
@@ -98,28 +99,21 @@ if uploaded_file:
                     qty = st.number_input(f"🔢 จำนวน: {q[:30]}", min_value=1, max_value=20, value=1, step=1, key=f"{sheet_name}_{i}_qty")
                     selected_questions.append({"Question": q.strip(), "Quantity": qty})
 
-    # 🔧 พื้นที่สำหรับเพิ่มคำถามเอง
     st.markdown("### ✍️ เพิ่มคำถามเอง (Custom Questions)")
     custom_question = st.text_input("กรอกคำถามใหม่ที่ต้องการเพิ่ม", "")
     custom_qty = st.number_input("จำนวนคอลัมน์", min_value=1, max_value=20, value=1, step=1, key="custom_qty")
 
     if st.button("➕ เพิ่มคำถามเข้า list"):
         if custom_question.strip():
-            selected_questions.append({
-                "Question": custom_question.strip(),
-                "Quantity": custom_qty
-            })
+            selected_questions.append({"Question": custom_question.strip(), "Quantity": custom_qty})
             st.success(f"เพิ่มคำถาม: {custom_question.strip()}")
         else:
             st.warning("กรุณากรอกคำถามก่อน")
-                
 
-
-    # ✅ PROCESS EXPORT
+    # ✅ EXPORT
     if st.button("📥 สร้างและดาวน์โหลด Excel + PDF"):
         columns, qgroup_row, question_row, pdf_rows = [], [], [], []
 
-        # 🔁 STANDARD QUESTIONS
         for q in selected_questions:
             base_q = q["Question"]
             group = find_q_group(base_q, sheets_data)
@@ -130,7 +124,6 @@ if uploaded_file:
                 question_row.append(label)
                 pdf_rows.append([group, label, ""])
 
-        # 🔁 CROSS QUESTIONS
         if is_cross and selected_products and selected_details:
             for product in selected_products:
                 name, qty = product["name"], product["qty"]
@@ -142,10 +135,10 @@ if uploaded_file:
                         question_row.append(label)
                         pdf_rows.append(["Product Details", label, ""])
 
-        # 🧾 CREATE Excel
         header_df = pd.DataFrame([qgroup_row, question_row])
         empty = pd.DataFrame([[""] * len(columns) for _ in range(5)])
         final_df = pd.concat([header_df, empty], ignore_index=True)
+
         st.markdown("### 🧾 ตัวอย่าง (Excel)")
         st.dataframe(final_df.head(5))
 
@@ -154,7 +147,6 @@ if uploaded_file:
             final_df.to_excel(writer, sheet_name="Survey Template", index=False)
         st.download_button("⬇️ ดาวน์โหลด Excel", data=excel_buffer.getvalue(), file_name="survey_template.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
-        # 📄 CREATE PDF
         st.markdown("### 🔍 ตัวอย่าง (PDF)")
         st.dataframe(pd.DataFrame(pdf_rows[:5], columns=["Group", "Question", "Answer"]))
 
