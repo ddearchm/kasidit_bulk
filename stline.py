@@ -110,7 +110,7 @@ if uploaded_file:
             base_q = q["Question"]
             group = find_q_group(base_q, sheets_data)
             for i in range(1, q["Quantity"] + 1):
-                label = f"{base_q}{i if q['Quantity'] > 1 else ''}"
+                label = f"{base_q}#{i}" if q["Quantity"] > 1 else base_q
                 columns.append(label)
                 qgroup_row.append(group)
                 question_row.append(label)
