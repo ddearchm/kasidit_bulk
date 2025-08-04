@@ -54,20 +54,9 @@ if uploaded_file:
                 for i in range(1, q["Quantity"] + 1):
                     columns.append(f"{base}{i if q['Quantity'] > 1 else ''}")
 
-                # ===== หา q_group และเตรียม row สำหรับ PDF =====
-                q_group = None
-                for sheet_df in sheets_data.values():
-                    if "standard_question_th" in sheet_df.columns and "q_group" in sheet_df.columns:
-                        match_row = sheet_df[sheet_df["standard_question_th"] == base]
-                        if not match_row.empty:
-                            q_group = str(match_row.iloc[0]["q_group"])
-                            break
-                if q_group is None:
-                    q_group = "N/A"
-
-                
-
+                              
                 # ===== หา q_group แค่ครั้งเดียวก่อนลูปจำนวน =====
+                
                 q_group = None
                 base_question = q["Question"].strip()
 
