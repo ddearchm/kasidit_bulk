@@ -44,18 +44,6 @@ def find_q_group(base_question, sheets_data):
                     best_group = str(row["q_group"])
     return best_group
 
-# 🔐 ป้องกัน duplicate column names
-seen_labels = set()
-def generate_unique_label(base, i, qty):
-    raw = f"{base}#{i}" if qty > 1 else base
-    label = raw
-    count = 2
-    while label in seen_labels:
-        label = f"{raw}#{count}"
-        count += 1
-    seen_labels.add(label)
-    return label
-
 # 🧪 MAIN
 if uploaded_file:
     xls = pd.ExcelFile(uploaded_file)
@@ -66,7 +54,7 @@ if uploaded_file:
     selected_products, selected_details = [], []
 
     if is_cross:
-        st.subheader("📦 เลือกผลิตภัณฑ์ (Product List)")
+        st.subheader("📦 เลือกผลิตภัณฐ์ (Product List)")
         for i, row in sheets_data["Product List"].iterrows():
             q = str(row["standard_question_th"])
             if pd.notna(q) and q.strip():
@@ -117,38 +105,15 @@ if uploaded_file:
 
     if st.button("📅 สร้างและดาวน์โหลด Excel + PDF"):
         columns, qgroup_row, question_row, pdf_rows = [], [], [], []
-        seen_labels.clear()
-
-        # ✅ Role sheet: คอลัมน์แรก
-        role_df = sheets_data.get("Role")
-        grouped_questions_by_group = {}
-        unmatched_questions = []
-        if role_df is not None:
-            for _, row in role_df.iterrows():
-                q = str(row.get("standard_question_th", "")).strip()
-                g = str(row.get("q_group", "")).strip()
-                if q:
-                    label = generate_unique_label(q, 1, 1)
-                    columns.append(label)
-                    qgroup_row.append(g if g else "N/A")
-                    question_row.append(label)
-                    pdf_rows.append([g if g else "N/A", label, ""])
-
-        # ✅ Group questions: matched vs unmatched
-        grouped_questions_by_group = {}
-        unmatched_questions = []
+        # 🧠 Group questions by q_group
+        grouped_questions = {}
         for q in selected_questions:
             base_q = q["Question"]
             group = find_q_group(base_q, sheets_data)
-            item = {"question": base_q, "qty": q["Quantity"], "group": group}
-            if group == "N/A":
-                unmatched_questions.append(item)
-            else:
-                grouped_questions_by_group.setdefault(group, []).append(item)
+            grouped_questions.setdefault(group, []).append((base_q, q["Quantity"]))
 
-        # ✅ ลำดับที่ต้องการ
+        # 🎯 ลำดับที่ต้องการ
         preferred_qgroup_order = [
-            "BUSINESS_TYPE",
             "Respondent Profile",
             "Customer & Market",
             "Business & Strategy",
@@ -158,53 +123,39 @@ if uploaded_file:
             "Special Topic"
         ]
 
-        already_handled = set()
+        # ✨ เพิ่มคำถามตามลำดับ group ที่กำหนด
         for group in preferred_qgroup_order:
-            if group in grouped_questions_by_group:
-                already_handled.add(group)
-                for item in grouped_questions_by_group[group]:
-                    base_q, qty = item["question"], item["qty"]
+            if group in grouped_questions:
+                for base_q, qty in grouped_questions[group]:
                     for i in range(1, qty + 1):
-                        label = generate_unique_label(base_q, i, qty)
+                        label = f"{base_q}#{i}" if qty > 1 else base_q
                         columns.append(label)
                         qgroup_row.append(group)
                         question_row.append(label)
                         pdf_rows.append([group, label, ""])
 
-        # ✅ จัดกลุ่มที่เหลือ (ไม่รวม N/A)
-        for group in grouped_questions_by_group:
-            if group not in already_handled and group != "N/A":
-                for item in grouped_questions_by_group[group]:
-                    base_q, qty = item["question"], item["qty"]
+        # 🧩 เผื่อมีคำถาม group อื่นที่ไม่อยู่ใน preferred_qgroup_order (จัดไว้ท้าย)
+        already_handled = set(preferred_qgroup_order)
+        for group in grouped_questions:
+            if group not in preferred_qgroup_order:
+                for base_q, qty in grouped_questions[group]:
                     for i in range(1, qty + 1):
-                        label = generate_unique_label(base_q, i, qty)
+                        label = f"{base_q}#{i}" if qty > 1 else base_q
                         columns.append(label)
                         qgroup_row.append(group)
                         question_row.append(label)
                         pdf_rows.append([group, label, ""])
-
-        # ✅ unmatched ไปท้ายสุด
-        for item in unmatched_questions:
-            base_q, qty = item["question"], item["qty"]
-            for i in range(1, qty + 1):
-                label = generate_unique_label(base_q, i, qty)
-                columns.append(label)
-                qgroup_row.append("N/A")
-                question_row.append(label)
-                pdf_rows.append(["N/A", label, ""])
-
-        # ✅ Cross Product
+        
         if is_cross and selected_products and selected_details:
             for prod in selected_products:
                 for i in range(1, prod["qty"] + 1):
                     for detail in selected_details:
-                        label = generate_unique_label(f"{prod['name']}-{detail}", i, prod["qty"])
+                        label = f"{prod['name']}-{detail}#{i}"
                         columns.append(label)
-                        qgroup_row.append("Product & Details")
+                        qgroup_row.append("Product Details")
                         question_row.append(label)
-                        pdf_rows.append(["Product & Details", label, ""])
+                        pdf_rows.append(["Product Details", label, ""])
 
-        # ✅ Create Excel & PDF
         header_df = pd.DataFrame([qgroup_row, question_row])
         empty = pd.DataFrame([[""] * len(columns) for _ in range(5)])
         final_df = pd.concat([header_df, empty], ignore_index=True)
@@ -244,5 +195,3 @@ if uploaded_file:
 
 else:
     st.info("📌 กรุณาอัปโหลด Excel เพื่อเริ่ม")
-
-
