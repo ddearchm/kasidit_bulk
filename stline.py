@@ -114,6 +114,7 @@ if uploaded_file:
 
         # 🎯 ลำดับที่ต้องการ
         preferred_qgroup_order = [
+            "BUSINESS_TYPE",
             "Respondent Profile",
             "Customer & Market",
             "Business & Strategy",
