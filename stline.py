@@ -54,7 +54,7 @@ if uploaded_file:
     selected_products, selected_details = [], []
 
     if is_cross:
-        st.subheader("📦 เลือกผลิตภัณฐ์ (Product List)")
+        st.subheader("📦 เลือกผลิตภัณฑ์ (Product List)")
         for i, row in sheets_data["Product List"].iterrows():
             q = str(row["standard_question_th"])
             if pd.notna(q) and q.strip():
@@ -106,26 +106,70 @@ if uploaded_file:
     if st.button("📅 สร้างและดาวน์โหลด Excel + PDF"):
         columns, qgroup_row, question_row, pdf_rows = [], [], [], []
 
+        # ✅ PATCH: Group questions by q_group (dict list of dict)
+        grouped_questions = {}
         for q in selected_questions:
             base_q = q["Question"]
             group = find_q_group(base_q, sheets_data)
-            for i in range(1, q["Quantity"] + 1):
-                label = f"{base_q}#{i}" if q["Quantity"] > 1 else base_q
-                columns.append(label)
-                qgroup_row.append(group)
-                question_row.append(label)
-                pdf_rows.append([group, label, ""])
+            grouped_questions.setdefault(group, []).append({
+                "question": base_q,
+                "qty": q["Quantity"],
+                "group": group
+            })
 
+        # ✅ PATCH: Define desired group order
+        preferred_qgroup_order = [
+            "Respondent Profile",
+            "Customer & Market",
+            "Business & Strategy",
+            "Pain Points & Needs",
+            "Product & Process",
+            "Product & Details",
+            "Special Topic"
+        ]
+
+        # ✅ PATCH: Track handled groups to avoid duplication
+        already_handled = set()
+
+        # ✨ Append questions by preferred group order
+        for group in preferred_qgroup_order:
+            if group in grouped_questions:
+                already_handled.add(group)
+                for item in grouped_questions[group]:
+                    base_q = item["question"]
+                    qty = item["qty"]
+                    for i in range(1, qty + 1):
+                        label = f"{base_q}#{i}"  # Always add suffix to prevent duplicate column names
+                        columns.append(label)
+                        qgroup_row.append(group)
+                        question_row.append(label)
+                        pdf_rows.append([group, label, ""])
+
+        # 🧩 PATCH: Append remaining unknown groups at the end
+        for group in grouped_questions:
+            if group not in already_handled:
+                for item in grouped_questions[group]:
+                    base_q = item["question"]
+                    qty = item["qty"]
+                    for i in range(1, qty + 1):
+                        label = f"{base_q}#{i}"
+                        columns.append(label)
+                        qgroup_row.append(group)
+                        question_row.append(label)
+                        pdf_rows.append([group, label, ""])
+
+        # ➕ Cross product: Product & Details
         if is_cross and selected_products and selected_details:
             for prod in selected_products:
                 for i in range(1, prod["qty"] + 1):
                     for detail in selected_details:
                         label = f"{prod['name']}-{detail}#{i}"
                         columns.append(label)
-                        qgroup_row.append("Product Details")
+                        qgroup_row.append("Product & Details")
                         question_row.append(label)
-                        pdf_rows.append(["Product Details", label, ""])
+                        pdf_rows.append(["Product & Details", label, ""])
 
+        # 🔧 Create dataframe
         header_df = pd.DataFrame([qgroup_row, question_row])
         empty = pd.DataFrame([[""] * len(columns) for _ in range(5)])
         final_df = pd.concat([header_df, empty], ignore_index=True)
