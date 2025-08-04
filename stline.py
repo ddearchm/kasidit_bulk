@@ -93,7 +93,7 @@ if uploaded_file:
             import os
 
             # กำหนด path ไปยังฟอนต์
-            font_path = os.path.join("fonts", "THSarabun.ttf")
+            font_path = os.path.join("font", "THSarabun.ttf")
 
             # ลงทะเบียนฟอนต์ใหม่
             pdfmetrics.registerFont(TTFont("THSarabun", font_path))
@@ -123,4 +123,5 @@ if uploaded_file:
             )
     else:
         st.info("⚠️ กรุณาเลือกคำถามก่อนสร้างไฟล์")
+
 
