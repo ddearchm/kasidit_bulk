@@ -11,7 +11,7 @@ st.title("📋 สร้าง Excel และ PDF จากแบบสอบ�
 
 uploaded_file = st.file_uploader("📂 อัปโหลดไฟล์ Excel", type=["xlsx"])
 
-FUZZY_MATCH_THRESHOLD = 90
+FUZZY_MATCH_THRESHOLD = 80
 import re
 
 def clean_question(text):
@@ -153,3 +153,4 @@ if uploaded_file:
             )
     else:
         st.info("⚠️ กรุณาเลือกคำถามก่อนสร้างไฟล์")
+
