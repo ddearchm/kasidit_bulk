@@ -44,80 +44,51 @@ if uploaded_file:
         st.success(f"✅ เลือกทั้งหมด {len(selected_questions)} คำถาม")
 
         if st.button("📥 สร้างและดาวน์โหลดไฟล์ Excel + PDF"):
-            columns = []
+            
+            # ===== เตรียมข้อมูล header และ PDF พร้อมกัน =====
+            qgroup_row = []
+            question_row = []
             pdf_rows = []
 
             for q in selected_questions:
-                base = q["Question"].strip()
-
-                # ===== สร้างชื่อคอลัมน์ Excel =====
-                for i in range(1, q["Quantity"] + 1):
-                    columns.append(f"{base}{i if q['Quantity'] > 1 else ''}")
-
-                              
-                # ===== หา q_group แค่ครั้งเดียวก่อนลูปจำนวน =====
-
-                q_group = None
                 base_question = q["Question"].strip()
 
-                for sheet_df in sheets_data.values():
-                    if "standard_question_th" in sheet_df.columns and "q_group" in sheet_df.columns:
-                        match_row = sheet_df[sheet_df["standard_question_th"] == base_question]
-                        if not match_row.empty:
-                         q_group = str(match_row.iloc[0]["q_group"])
-                         break
-
-                if q_group is None:
-                    q_group = "N/A"
-                    # ===== แล้วค่อยลูปตามจำนวน =====
-                for i in range(1, q["Quantity"] + 1):
-                    numbered_q = f"{base_question}{i if q['Quantity'] > 1 else ''}"
-                    pdf_rows.append([q_group, numbered_q, ""])
-
-            # ===== สร้าง Excel =====
-            # ===== สร้าง Excel แบบมี 2 แถวหัวตาราง =====
-            columns = []
-            qgroup_row = []
-            question_row = []
-
-            for q in selected_questions:
-                base_question = q["Question"].strip()
-
-                # หา group
+                # หา q_group โดยแมตช์แบบ flexible
                 q_group = "N/A"
                 for df in sheets_data.values():
                     if "standard_question_th" in df.columns and "q_group" in df.columns:
-                        match = df[df["standard_question_th"] == base_question]
-                        if not match.empty:
-                            q_group = str(match.iloc[0]["q_group"])
+                        matched_rows = df[
+                            df["standard_question_th"].astype(str).str.strip().str.lower() == base_question.lower()
+                        ]
+                        if not matched_rows.empty:
+                            q_group = str(matched_rows.iloc[0]["q_group"])
                             break
 
-                # สร้าง column ตามจำนวน
                 for i in range(1, q["Quantity"] + 1):
-                    col_name = f"{base_question}{i if q['Quantity'] > 1 else ''}"
-                    columns.append(col_name)
+                    numbered_q = f"{base_question}{i if q['Quantity'] > 1 else ''}"
                     qgroup_row.append(q_group)
-                    question_row.append(col_name)
+                    question_row.append(numbered_q)
+                    pdf_rows.append([q_group, numbered_q, ""])
 
-            # สร้าง DataFrame พร้อม header 2 ชั้น
-            multi_header_df = pd.DataFrame(columns=columns)
-            multi_header_df.loc[-2] = qgroup_row
-            multi_header_df.loc[-1] = question_row
-            multi_header_df.index = multi_header_df.index + 2
-            multi_header_df = multi_header_df.sort_index()
+            # ===== สร้าง DataFrame แบบไม่ใส่ .columns (ป้องกันคำถามซ้ำ) =====
+            multi_header_df = pd.DataFrame([qgroup_row, question_row])
 
-            # Export to Excel
+            # (Optional) เติมแถวเปล่าให้กรอก
+            empty_rows = pd.DataFrame([[""] * len(question_row) for _ in range(5)])
+            multi_header_df = pd.concat([multi_header_df, empty_rows], ignore_index=True)
+
+            # ===== Export Excel =====
             excel_buffer = BytesIO()
             with pd.ExcelWriter(excel_buffer, engine="openpyxl") as writer:
                 multi_header_df.to_excel(writer, sheet_name="Survey Template", index=False)
 
-            # ปุ่มโหลด
             st.download_button(
                 label="⬇️ ดาวน์โหลด Excel",
                 data=excel_buffer.getvalue(),
                 file_name="survey_template.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
+
 
             # ===== สร้าง PDF =====
             from reportlab.pdfbase import pdfmetrics
