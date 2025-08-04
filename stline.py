@@ -139,7 +139,7 @@ if uploaded_file:
                     base_q = item["question"]
                     qty = item["qty"]
                     for i in range(1, qty + 1):
-                        label = f"{base_q}#{i}"  # Always add suffix to prevent duplicate column names
+                        label = f"{base_q}#{i}" if qty > 1 else base_q
                         columns.append(label)
                         qgroup_row.append(group)
                         question_row.append(label)
@@ -152,7 +152,7 @@ if uploaded_file:
                     base_q = item["question"]
                     qty = item["qty"]
                     for i in range(1, qty + 1):
-                        label = f"{base_q}#{i}"
+                        label = f"{base_q}#{i}" if qty > 1 else base_q
                         columns.append(label)
                         qgroup_row.append(group)
                         question_row.append(label)
@@ -209,3 +209,4 @@ if uploaded_file:
 
 else:
     st.info("📌 กรุณาอัปโหลด Excel เพื่อเริ่ม")
+
