@@ -117,7 +117,7 @@ QUESTION_BANK = {
             {"standard_question_th": "คุณสมบัติของสินค้าคอนกรีตขายดี", "q_group": "Product & Process"},
             {"standard_question_th": "วิธีการทำงานในส่วน Pre-Stressed", "q_group": "Product & Process"},
             {"standard_question_th": "วิธีการทำงานในส่วน RMC", "q_group": "Product & Process"},
-            {"standard_question_th": "วิธีการทำงานในส่วน Non Pre-Stressed", "q_group": "Product & Process"},
+            {"standard_question_th": "วิธีการทำงานในส่วน Non-Prestressed", "q_group": "Product & Process"},
             {"standard_question_th": "กระบวนการทำงานในโรงหล่อที่สำคัญ", "q_group": "Product & Process"},
             {"standard_question_th": "แหล่งวัตถุดิบ", "q_group": "Product & Process"},
             {"standard_question_th": "วิธีเช็คคุณภาพวัตถุดิบ", "q_group": "Product & Process"},
@@ -737,5 +737,6 @@ if st.button("📅 สร้างและดาวน์โหลด Excel + P
     # ✅ Preview Excel แนวตั้งใน Streamlit
     st.markdown("### 📋 ตัวอย่าง (Excel แนวตั้ง)")
     st.dataframe(df_vertical.head(10))
+
 
 
