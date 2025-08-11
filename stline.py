@@ -11,7 +11,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 from rapidfuzz import fuzz
 
 st.set_page_config(page_title="Survey Column Builder", layout="wide")
-st.title("📋 สร้าง Excel และ PDF แบบสอบถาม (ไม่ต้องอัปโหลดไฟล์)")
+st.title("📋 สร้างแบบสอบถาม (Excel และ PDF)")
 
 # 🎯 SETUP SESSION STATE
 if "custom_questions" not in st.session_state:
@@ -737,3 +737,4 @@ if st.button("📅 สร้างและดาวน์โหลด Excel + P
     # ✅ Preview Excel แนวตั้งใน Streamlit
     st.markdown("### 📋 ตัวอย่าง (Excel แนวตั้ง)")
     st.dataframe(df_vertical.head(10))
+
