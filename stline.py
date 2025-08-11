@@ -441,7 +441,7 @@ BUSINESS_TYPES = list(QUESTION_BANK.keys())
 
 # 🧭 เลือก Business Type ก่อน (แทนที่การอัปโหลดไฟล์)
 # หัวข้อใหญ่ (จะใหญ่กว่า markdown ปกติ)
-st.subheader("🏷️ เลือก BUSINESS_TYPE ก่อนเริ่ม")
+st.subheader("🏷️ เลือก BUSINESS TYPE ก่อนเริ่ม")
 
 # ซ่อน label ของ selectbox แล้วใช้หัวข้อด้านบนแทน
 biz = st.selectbox(
@@ -737,4 +737,5 @@ if st.button("📅 สร้างและดาวน์โหลด Excel + P
     # ✅ Preview Excel แนวตั้งใน Streamlit
     st.markdown("### 📋 ตัวอย่าง (Excel แนวตั้ง)")
     st.dataframe(df_vertical.head(10))
+
 
