@@ -774,4 +774,32 @@ if st.button("📅 สร้างและดาวน์โหลด Excel + P
     st.markdown("### 📋 ตัวอย่าง (Excel แนวตั้ง)")
     st.dataframe(df_vertical.head(10))
 
+   # ✅ Excel สำหรับ Google Sheets (หัว 1 แถว, สะอาด, import ได้ทันที)
+    gs_buffer = BytesIO()
+
+    # ใช้เฉพาะคอลัมน์ที่เลือกไว้แล้วใน 'columns'
+    gs_df = pd.DataFrame(columns=columns)
+
+    with pd.ExcelWriter(gs_buffer, engine="openpyxl") as writer:
+        # Sheet 1: Responses (ให้กรอกจริงใน Google Sheets)
+        gs_df.to_excel(writer, sheet_name="Responses", index=False)
+        ws = writer.sheets["Responses"]
+        ws.freeze_panes = "A2"  # freeze หัวตาราง
+
+        # Sheet 2: DataDictionary (อธิบายคอลัมน์ไว้ เผื่อใช้ใน AppSheet/ภายหลัง)
+        dict_df = pd.DataFrame({
+            "column_name": columns,
+            "q_group": qgroup_row,
+            "question_text": question_row,
+        })
+        dict_df.to_excel(writer, sheet_name="DataDictionary", index=False)
+
+    st.download_button(
+        label="⬇️ ดาวน์โหลด Excel (จำเป็นสำหรับใช้ใน Google Sheets)",
+        data=gs_buffer.getvalue(),
+        file_name="survey_google_sheets.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+
+
 
