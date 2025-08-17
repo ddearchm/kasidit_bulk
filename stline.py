@@ -171,9 +171,9 @@ QUESTION_BANK = {
             {"standard_question_th": "คุณสมบัติปูนที่สำคัญ", "q_group": "Product & Process"},
             {"standard_question_th": "คุณสมบัติสำคัญในกระบวนการผลิตสินค้าคอนกรีตขายดี", "q_group": "Product & Process"},
             {"standard_question_th": "คุณสมบัติของสินค้าคอนกรีตขายดี", "q_group": "Product & Process"},
-            {"standard_question_th": "วิธีการทำงานในส่วน Pre-Stressed", "q_group": "Product & Process"},
+            {"standard_question_th": "วิธีการทำงานในส่วน Prestressed", "q_group": "Product & Process"},
             {"standard_question_th": "วิธีการทำงานในส่วน RMC", "q_group": "Product & Process"},
-            {"standard_question_th": "วิธีการทำงานในส่วน Non Pre-Stressed", "q_group": "Product & Process"},
+            {"standard_question_th": "วิธีการทำงานในส่วน Non-Prestressed", "q_group": "Product & Process"},
             {"standard_question_th": "กระบวนการทำงานในโรงหล่อที่สำคัญ", "q_group": "Product & Process"},
             {"standard_question_th": "แหล่งวัตถุดิบ", "q_group": "Product & Process"},
             {"standard_question_th": "วิธีเช็คคุณภาพวัตถุดิบ", "q_group": "Product & Process"},
@@ -212,12 +212,7 @@ QUESTION_BANK = {
             {"standard_question_th": "มีคนรับช่วงธุรกิจต่อหรือไม่", "q_group": "Business & Strategy"},
             {"standard_question_th": "ธุรกิจอื่นที่ทำควบคู่กัน", "q_group": "Business & Strategy"},
             {"standard_question_th": "แผนขยายธุรกิจ", "q_group": "Business & Strategy"},
-            {"standard_question_th": "ทำธุรกิจโรงหล่อควบคู่ร้านวัสดุก่อสร้าง", "q_group": "Business & Strategy"},
-            {"standard_question_th": "ปูน SCG ที่ใช้ในกระบวนการผลิต", "q_group": "Business & Strategy"},
-            {"standard_question_th": "สินค้าหลักที่ผลิต", "q_group": "Business & Strategy"},
-            {"standard_question_th": "สินค้าขายดี", "q_group": "Business & Strategy"},
-            {"standard_question_th": "กลุ่มลูกค้าหลักของธุรกิจโรงหล่อ", "q_group": "Business & Strategy"},
-            {"standard_question_th": "แหล่งวัตถุดิบและวิธีเช็คคุณภาพ", "q_group": "Business & Strategy"},            
+            {"standard_question_th": "ทำธุรกิจโรงหล่อควบคู่ร้านวัสดุก่อสร้าง", "q_group": "Business & Strategy"},            
         ],
         "Pain Points & Needs": [
             {"standard_question_th": "need ในขั้นตอนการทำงาน", "q_group": "Pain Points & Needs"},
@@ -228,8 +223,13 @@ QUESTION_BANK = {
             
         ],
         "Product & Process": [
+            {"standard_question_th": "ปูน SCG ที่ใช้ในกระบวนการผลิต", "q_group": "Business & Strategy"},
+            {"standard_question_th": "สินค้าหลักที่ผลิต", "q_group": "Business & Strategy"},
+            {"standard_question_th": "สินค้าขายดี", "q_group": "Business & Strategy"},
+            {"standard_question_th": "กลุ่มลูกค้าหลักของธุรกิจโรงหล่อ", "q_group": "Business & Strategy"},
+            {"standard_question_th": "แหล่งวัตถุดิบและวิธีเช็คคุณภาพ", "q_group": "Business & Strategy"},
             {"standard_question_th": "ระบบขายหน้าร้าน", "q_group": "Product & Process"},
-            {"standard_question_th": "แบรนด์ขายดี", "q_group": "Product & Process"},
+            {"standard_question_th": "แบรนด์ที่ขายดี", "q_group": "Product & Process"},
             {"standard_question_th": "ปัจจัยสำคัญในการเลือกซื้อปูน เสือ/SCG", "q_group": "Product & Process"},
             {"standard_question_th": "กลยุทธ์รักษาฐานลูกค้า และสู้กับคู่แข่ง", "q_group": "Product & Process"},
             {"standard_question_th": "ปัจจัยสำคัญของการผลิต", "q_group": "Product & Process"},            
@@ -292,85 +292,50 @@ QUESTION_BANK = {
             {"standard_question_th": "เป้าหมายชีวิต", "q_group": "Respondent Profile"},
             {"standard_question_th": "สิ่งที่อยากพัฒนาเพื่อให้ธุรกิจดีขึ้น", "q_group": "Respondent Profile"},
             {"standard_question_th": "ประวัติการศึกษาและจุดเริ่มต้นการทำงาน", "q_group": "Respondent Profile"},
-            {"standard_question_th": "ดูทีวีหรือไม่", "q_group": "Respondent Profile"},
-            {"standard_question_th": "ดูยูทูปหรือไม่", "q_group": "Respondent Profile"},
-            {"standard_question_th": "เล่นเฟซบุ๊คหรือไม่", "q_group": "Respondent Profile"},
-            {"standard_question_th": "เล่นติ๊กต๊อกหรือไม่", "q_group": "Respondent Profile"},
-            {"standard_question_th": "เล่นไอจีหรือไม่", "q_group": "Respondent Profile"},
-            {"standard_question_th": "สื่อช่องทางอื่นๆที่เล่น หรือสนใจเลยหันมาเล่น", "q_group": "Respondent Profile"},
-            {"standard_question_th": "ดูทีวี (detail)", "q_group": "Respondent Profile"},
-            {"standard_question_th": "ดูยูทูป (detail)", "q_group": "Respondent Profile"},
-            {"standard_question_th": "เล่นเฟซบุ๊ค (detail)", "q_group": "Respondent Profile"},
-            {"standard_question_th": "เล่นติ๊กต๊อก (detail)", "q_group": "Respondent Profile"},
-            {"standard_question_th": "เล่นไอจี (detail)", "q_group": "Respondent Profile"},
-            {"standard_question_th": "lifestyle-กาแฟ/คาเฟ่", "q_group": "Respondent Profile"},
-            {"standard_question_th": "lifestyle-ทานอาหารนอกบ้าน", "q_group": "Respondent Profile"},
-            {"standard_question_th": "lifestyle-ซื้อของบิ๊กซี/โลตัส", "q_group": "Respondent Profile"},
-            {"standard_question_th": "lifestyle-ซื้อของเซ็นทรัล", "q_group": "Respondent Profile"},
-            {"standard_question_th": "lifestyle-ท่องเที่ยว", "q_group": "Respondent Profile"},
-            {"standard_question_th": "lifestyle-ออกกำลังกาย", "q_group": "Respondent Profile"},
-            {"standard_question_th": "lifestyle-กีฬา", "q_group": "Respondent Profile"},
-            {"standard_question_th": "lifestyle-อื่นๆ", "q_group": "Respondent Profile"},
+            {"standard_question_th": "สื่อที่ใช้ในการรับข้อมูล", "q_group": "Respondent Profile"},
+            {"standard_question_th": "lifestyle", "q_group": "Respondent Profile"},
+        ],
+        "Customer's Journey": [
+            {"standard_question_th": "ค้นหาข้อมูลก่อนซื้ออย่างไร", "q_group": "Customer's Journey"},
+            {"standard_question_th": "ปัจจัยสำคัญในการเลือกซื้อปูน", "q_group": "Customer's Journey"},
+            {"standard_question_th": "ร้านค้าที่ส่งผลต่อการซื้อปูน", "q_group": "Customer's Journey"},
+            {"standard_question_th": "สื่อ/ช่องทางที่ส่งผลต่อการซื้อปูน", "q_group": "Customer's Journey"},
+            {"standard_question_th": "ร้าน Modern Trade ที่ซื้อวัสดุุ", "q_group": "Customer's Journey"},
+            {"standard_question_th": "สินค้าที่ซื้อมากที่สุดจาก Modern Trade", "q_group": "Customer's Journey"},
+            {"standard_question_th": "โมเดิร์นเทรดที่เป็นสมาชิกในการสะสมแต้ม", "q_group": "Customer's Journey"},
+            {"standard_question_th": "ระบบสะสมแต้มนี้ตอบโจทย์คุณในด้านใด", "q_group": "Customer's Journey"},
+            {"standard_question_th": "สิ่งที่ไม่ประทับใจ", "q_group": "Customer's Journey"},
+            {"standard_question_th": "รู้สึกว่าการสะสมคะแนนยุ่งยากหรือไม่", "q_group": "Customer's Journey"},
+            {"standard_question_th": "วิธีสะสมแต้ม", "q_group": "Customer's Journey"},
+            {"standard_question_th": "รูปแบบบิลที่ใช้ในแต้มปูน", "q_group": "Customer's Journey"},
+            {"standard_question_th": "เหตุผลที่เป็นแฟนพันธุ์แท้ปูนเสือ/SCG", "q_group": "Customer's Journey"},
         ],
         "Customer & Market": [
             {"standard_question_th": "ใครเป็นผู้ตัดสินใจซื้อวัสดุก่อสร้าง", "q_group": "Customer & Market"},
             {"standard_question_th": "ประเภทงานก่อสร้างที่ให้บริการเป็นหลัก", "q_group": "Customer & Market"},
-            {"standard_question_th": "ปัจจัยสำคัญในการเลือกซื้อปูน", "q_group": "Customer & Market"},
-            {"standard_question_th": "ปัจจัยสำคัญในการเลือกซื้อปูน เสือ/SCG", "q_group": "Customer & Market"},
-            {"standard_question_th": "แบรนด์ใดที่คุณมองว่าใกล้เคียงกับปูน เสือ/SCG", "q_group": "Customer & Market"},
-            {"standard_question_th": "ร้านค้า-มีอิทธิพลต่อการซื้อปูน", "q_group": "Customer & Market"},
-            {"standard_question_th": "สื่อโทรทัศน์-มีอิทธิพลต่อการซื้อปูน", "q_group": "Customer & Market"},
-            {"standard_question_th": "สื่อวิทยุ-มีอิทธิพลต่อการซื้อปูน", "q_group": "Customer & Market"},
-            {"standard_question_th": "การบอกต่อ-มีอิทธิพลต่อการซื้อปูน", "q_group": "Customer & Market"},
-            {"standard_question_th": "สื่อโซเชียล-มีอิทธิพลต่อการซื้อปูน", "q_group": "Customer & Market"},
-            {"standard_question_th": "งานสัมมนา-มีอิทธิพลต่อการซื้อปูน", "q_group": "Customer & Market"},
-            {"standard_question_th": "งานเอ็กซ์โป-มีอิทธิพลต่อการซื้อปูน", "q_group": "Customer & Market"},
-            {"standard_question_th": "ช่องทางอื่นๆ-มีอิทธิพลต่อการซื้อปูน", "q_group": "Customer & Market"},
+            {"standard_question_th": "แบรนด์ใดที่คุณมองว่าใกล้เคียงกับปูนเสือ/SCG", "q_group": "Customer & Market"},
             {"standard_question_th": "วิธีการสั่งซื้อปูนและวัสดุก่อสร้าง", "q_group": "Customer & Market"},
             {"standard_question_th": "%สั่งซื้อปูนและวัสดุก่อสร้างทางโทรศัพท์", "q_group": "Customer & Market"},
             {"standard_question_th": "%สั่งซื้อปูนและวัสดุก่อสร้างทางไลน์", "q_group": "Customer & Market"},
             {"standard_question_th": "%สั่งซื้อปูนและวัสดุก่อสร้างที่หน้าร้าน", "q_group": "Customer & Market"},
             {"standard_question_th": "วิธีการจ่ายเงิน (เงินสด, เครดิต, เงินสดและเครดิต)", "q_group": "Customer & Market"},
-            {"standard_question_th": "ยอดซื้อปูน และวัสดุก่อสร้างโดยเฉลี่ย (บาทต่อบิล)", "q_group": "Customer & Market"},
-            {"standard_question_th": "ซื้อปูนและวัสดุก่อสร้างจาก-ไทวัสดุ", "q_group": "Customer & Market"},
-            {"standard_question_th": "ซื้อปูนและวัสดุก่อสร้างจาก-โกลบอลเฮาส์", "q_group": "Customer & Market"},
-            {"standard_question_th": "ซื้อปูนและวัสดุก่อสร้างจาก-ดูโฮม", "q_group": "Customer & Market"},
-            {"standard_question_th": "ซื้อปูนและวัสดุก่อสร้างจาก-โฮมโปร", "q_group": "Customer & Market"},
-            {"standard_question_th": "ซื้อปูนและวัสดุก่อสร้างจาก-บุญถาวร", "q_group": "Customer & Market"},
-            {"standard_question_th": "สินค้าที่ซื้อมากที่สุดจาก-ไทวัสดุ", "q_group": "Customer & Market"},
-            {"standard_question_th": "สินค้าที่ซื้อมากที่สุดจาก-ไทวัสดุ เหตุผล", "q_group": "Customer & Market"},
-            {"standard_question_th": "สินค้าที่ซื้อมากที่สุดจาก-โกลบอลเฮาส์", "q_group": "Customer & Market"},
-            {"standard_question_th": "สินค้าที่ซื้อมากที่สุดจาก-โกลบอลเฮาส์ เหตุผล", "q_group": "Customer & Market"},
-            {"standard_question_th": "สินค้าที่ซื้อมากที่สุดจาก-ดูโฮม", "q_group": "Customer & Market"},
-            {"standard_question_th": "สินค้าที่ซื้อมากที่สุดจาก-ดูโฮม เหตุผล", "q_group": "Customer & Market"},
-            {"standard_question_th": "สินค้าที่ซื้อมากที่สุดจาก-โฮมโปร", "q_group": "Customer & Market"},
-            {"standard_question_th": "สินค้าที่ซื้อมากที่สุดจาก-โฮมโปร เหตุผล", "q_group": "Customer & Market"},
-            {"standard_question_th": "สินค้าที่ซื้อมากที่สุดจาก-บุญถาวร", "q_group": "Customer & Market"},
-            {"standard_question_th": "สินค้าที่ซื้อมากที่สุดจาก-บุญถาวร เหตุผล", "q_group": "Customer & Market"},
-            {"standard_question_th": "โมเดิร์นเทรดที่เป็นสมาชิกในการสะสมแต้ม", "q_group": "Customer & Market"},
-            {"standard_question_th": "ระบบสะสมแต้มนี้ตอบโจทย์คุณในด้านใด", "q_group": "Customer & Market"},
-            {"standard_question_th": "สิ่งที่ไม่ประทับใจ", "q_group": "Customer & Market"},
-            {"standard_question_th": "รู้สึกว่าการสะสมคะแนนยุ่งยากหรือไม่ อธิบาย", "q_group": "Customer & Market"},
-            {"standard_question_th": "วิธีสะสมแต้ม", "q_group": "Customer & Market"},
-            {"standard_question_th": "แต้มปูนตอบโจทย์คุณในด้านใด", "q_group": "Customer & Market"},
-            {"standard_question_th": "สิ่งที่ไม่ประทับใจในแต้มปูน", "q_group": "Customer & Market"},
-            {"standard_question_th": "รู้สึกว่าการสะสมคะแนนแต้มปูนยุ่งยากหรือไม่ อธิบาย", "q_group": "Customer & Market"},
-            {"standard_question_th": "กิจกรรมที่อยากให้เพิ่มในระบบแต้มปูน", "q_group": "Customer & Market"},
-            {"standard_question_th": "กิจกรรมที่ดึงดูดการแลกของรางวัลน่าสนใจมากขึ้น", "q_group": "Customer & Market"},
+            {"standard_question_th": "ยอดซื้อปูน และวัสดุก่อสร้างโดยเฉลี่ย (บาทต่อบิล)", "q_group": "Customer & Market"},            
             {"standard_question_th": "สิ่งที่ SCG มีแต่เจ้าอื่นไม่มี", "q_group": "Customer & Market"},
         ],
         "Business & Strategy": [
-            {"standard_question_th": "บริษัทรับเหมาก่อสร้าง", "q_group": "Business & Strategy"},
+            {"standard_question_th": "ชื่อบริษัทรับเหมาก่อสร้าง", "q_group": "Business & Strategy"},
             {"standard_question_th": "ชื่อโครงการในวันที่เข้าสัมภาษณ์", "q_group": "Business & Strategy"},
             {"standard_question_th": "ภาค (ตามที่อยู่)", "q_group": "Business & Strategy"},
             {"standard_question_th": "จังหวัด (ตามที่อยู่)", "q_group": "Business & Strategy"},
             {"standard_question_th": "จังหวัดที่รับบริการ", "q_group": "Business & Strategy"},
-            {"standard_question_th": "ร้านประจำที่ซื้อวัสดุก่อสร้าง", "q_group": "Business & Strategy"},
+            {"standard_question_th": "ร้านประจำที่ซื้อวัสดุก่อสร้าง", "q_group": "Business & Strategy"},            
+            {"standard_question_th": "วิธีคิดค่าบริการงานก่อสร้าง", "q_group": "Business & Strategy"},
+            {"standard_question_th": "มูลค่างานต่อปี", "q_group": "Business & Strategy"},
+            {"standard_question_th": "ร้านประจำที่ซื้อปูน เสือ/SCG", "q_group": "Business & Strategy"},            
+            {"standard_question_th": "ความถี่ในการสั่งปูน (ครั้ง/สัปดาห์)", "q_group": "Business & Strategy"},
+            {"standard_question_th": "ความถี่ในการเข้าร้านวัสดุก่อสร้าง (ครั้ง/สัปดาห์)", "q_group": "Business & Strategy"},
             {"standard_question_th": "มีคนรับช่วงธุรกิจต่อหรือไม่", "q_group": "Business & Strategy"},
             {"standard_question_th": "ธุรกิจอื่นที่ทำควบคู่กัน", "q_group": "Business & Strategy"},
-        ],
-        "Product & Process": [
-            {"standard_question_th": "วิธีการจัดเก็บปูนในไซต์งาน", "q_group": "Product & Process"},
         ],
         "Pain Points & Needs": [
             {"standard_question_th": "ปัญหาที่พบในการทำงานของช่าง", "q_group": "Pain Points & Needs"},
@@ -379,12 +344,7 @@ QUESTION_BANK = {
             {"standard_question_th": "สิ่งที่อยากให้ SCG สนับสนุน/ช่วยเหลือ", "q_group": "Pain Points & Needs"},                        
         ],
         "Product & Process": [
-            {"standard_question_th": "วิธีคิดค่าบริการงานก่อสร้าง", "q_group": "Product & Process"},
-            {"standard_question_th": "มูลค่างานต่อปี", "q_group": "Product & Process"},
-            {"standard_question_th": "ร้านประจำที่ซื้อปูน เสือ/SCG", "q_group": "Product & Process"},
             {"standard_question_th": "ปูนเสือ/SCG ที่ซื้อไป นิยมใช้กับงานประเภทใด", "q_group": "Product & Process"},
-            {"standard_question_th": "ความถี่ในการสั่งปูน (ครั้ง/สัปดาห์)", "q_group": "Product & Process"},
-            {"standard_question_th": "ความถี่ในการเข้าร้านวัสดุก่อสร้าง (ครั้ง/สัปดาห์)", "q_group": "Product & Process"},
             {"standard_question_th": "สินค้าที่มักซื้อคู่กับปูน", "q_group": "Product & Process"},
             {"standard_question_th": "ปริมาณสินค้าที่มักซื้อคู่กับปูน", "q_group": "Product & Process"},
             {"standard_question_th": "สนใจทดลองใช้สินค้า scg หรือไม่", "q_group": "Product & Process"},
@@ -438,44 +398,81 @@ QUESTION_BANK = {
 }
 
 BUSINESS_TYPES = list(QUESTION_BANK.keys())
-
+st.markdown("""<style>.heading-lg{ font-size:1.25rem; font-weight:700; margin:8px 0 4px; }</style>""", unsafe_allow_html=True)
 # 🧭 เลือก Business Type ก่อน (แทนที่การอัปโหลดไฟล์)
 # หัวข้อใหญ่ (จะใหญ่กว่า markdown ปกติ)
 st.subheader("🏷️ เลือก BUSINESS TYPE ก่อนเริ่ม")
 
-# ซ่อน label ของ selectbox แล้วใช้หัวข้อด้านบนแทน
-biz = st.selectbox(
-    "",  # ไม่ใส่ข้อความ
-    options=BUSINESS_TYPES,
-    index=None,  # <- ยังไม่เลือกอะไร
-    placeholder="— เลือก BUSINESS_TYPE —",
-    label_visibility="collapsed",
-)
+try:
+    # เวอร์ชันใหม่ของ Streamlit
+    biz = st.selectbox(
+        "",
+        options=list(QUESTION_BANK.keys()),
+        index=None,
+        placeholder="— เลือก BUSINESS_TYPE —",
+        label_visibility="collapsed",
+    )
+except TypeError:
+    # เวอร์ชันเก่า: ทำ placeholder เอง
+    PLACEHOLDER = "— เลือก BUSINESS_TYPE —"
+    biz = st.selectbox(
+        "",
+        options=[PLACEHOLDER] + list(QUESTION_BANK.keys()),
+        index=0,
+        label_visibility="collapsed",
+    )
+    if biz == PLACEHOLDER:
+        st.info("👆 กรุณาเลือก BUSINESS TYPE เพื่อสร้างคำถาม")
+        st.stop()
 
-# ยังไม่เลือก -> บอกผู้ใช้แล้วหยุดการประมวลผลต่อ
-if biz is None:
+# เวอร์ชันใหม่: ถ้ายังไม่เลือก จะเป็น None
+if not biz:
     st.info("👆 กรุณาเลือก BUSINESS TYPE เพื่อสร้างคำถาม")
     st.stop()
 
+
 # 📚 แปลง QUESTION_BANK -> sheets_data (โครงเดียวกับไฟล์ Excel เดิม)
+PRODUCT_SHEETS = {"Product List", "Product & Details"}
+
 def build_sheets_data_from_bank(bank_for_biz: dict) -> dict:
     sheets = {}
-    for sheet_name, rows in bank_for_biz.items():
-        # rows: list of dicts {"standard_question_th": ..., "q_group": ...}
+    for sheet_name, rows in (bank_for_biz or {}).items():
+        # ข้ามชีตที่ว่างเปล่า
+        if rows is None or (isinstance(rows, list) and len(rows) == 0):
+            continue
+
         df = pd.DataFrame(rows)
-        # เผื่อบาง sheet ไม่มี q_group (ไม่ควรเกิด แต่กันไว้)
+
+        # ถ้าเป็น list[str] จะได้คอลัมน์ชื่อ 0 มา -> แปลงให้ถูก
+        if "standard_question_th" not in df.columns:
+            if 0 in df.columns:  # เคส list[str]
+                df = pd.DataFrame({"standard_question_th": df[0].astype(str).str.strip()})
+            else:
+                # ไม่มีคำถามเลยก็ข้ามไป
+                if df.empty:
+                    continue
+                raise ValueError(f"{sheet_name}: missing 'standard_question_th'")
+
         if "q_group" not in df.columns:
-            df["q_group"] = "N/A"
-        # ให้โครงสร้างเหมือนเดิม
-        df = df[["standard_question_th", "q_group"]]
-        sheets[sheet_name] = df
+            df["q_group"] = "Product & Details" if sheet_name in PRODUCT_SHEETS else sheet_name
+
+        df = df[["standard_question_th", "q_group"]].copy()
+        df["standard_question_th"] = df["standard_question_th"].astype(str).str.strip()
+        df["q_group"] = df["q_group"].astype(str).str.strip()
+
+        # ข้ามแถวที่คำถามว่าง
+        df = df[df["standard_question_th"] != ""]
+        if not df.empty:
+            sheets[sheet_name] = df
+
     return sheets
 
-sheets_data = build_sheets_data_from_bank(QUESTION_BANK[biz])
+
+sheets_data = build_sheets_data_from_bank(QUESTION_BANK.get(biz, {}))
+
 
 # ตรวจว่ามี cross-product ไหม
 is_cross = "Product List" in sheets_data and "Product & Details" in sheets_data
-selected_products, selected_details = [], []
 
 # =========================
 #   UI เลือกคำถาม (มาตรฐานก่อน → ค่อย Product)
@@ -486,6 +483,7 @@ selected_questions = []
 # ลำดับกลุ่มมาตรฐาน (สำหรับหน้าจอเลือกคำถาม)
 ORDER_STANDARD_GROUPS = [
     "Respondent Profile",
+    "Customer's Journey",
     "Customer & Market",
     "Business & Strategy",
     "Pain Points & Needs",
@@ -514,22 +512,93 @@ for sheet_name in ORDER_STANDARD_GROUPS:
                         "Group": row.get("q_group", "N/A")
                     })
 
+# —— หลังจากนั้นค่อย “กลุ่ม Product สำหรับ cross” ——
+selected_products, selected_details = [], []
+if is_cross:
+    st.subheader("📑 กลุ่ม Product List")
+
+    # Product List มาก่อน
+    st.markdown("<div class='heading-lg' style='text-decoration: underline;'>📦 Product List</div>", unsafe_allow_html=True)
+    prod_df = sheets_data["Product List"]
+
+    # ให้ 2 กลุ่มนี้ติ๊กทั้งหมดเป็นค่าเริ่มต้น
+    DEFAULT_SELECT_ALL_BIZ = {"Subdealer & Bag transformer", "Contractor"}
+    default_select_all = (biz in DEFAULT_SELECT_ALL_BIZ)
+
+    # ทำ prefix ให้ key ไม่ชนกันข้าม business type
+    prod_prefix = f"prod_{biz.replace(' ', '_')}"
+
+    # init ครั้งแรกของ Product List (ต่อ business type)
+    if st.session_state.get(f"{prod_prefix}_initialized") is None:
+        st.session_state[f"{prod_prefix}_select_all"] = default_select_all
+        st.session_state[f"{prod_prefix}_select_all_prev"] = default_select_all
+        # ตั้งค่า checkbox รายการสินค้าให้ตรงกับ select_all ตอนเริ่ม
+        for i in range(len(prod_df)):
+            st.session_state[f"{prod_prefix}_{i}"] = default_select_all
+        st.session_state[f"{prod_prefix}_initialized"] = True
+
+    # ปุ่ม Select All
+    st.checkbox("✅ เลือกทั้งหมด", key=f"{prod_prefix}_select_all")
+
+    # ถ้า select_all เปลี่ยนค่า → sync ทุกกล่อง
+    if st.session_state[f"{prod_prefix}_select_all_prev"] != st.session_state[f"{prod_prefix}_select_all"]:
+        new_val = st.session_state[f"{prod_prefix}_select_all"]
+        for i in range(len(prod_df)):
+            st.session_state[f"{prod_prefix}_{i}"] = new_val
+        st.session_state[f"{prod_prefix}_select_all_prev"] = new_val
+
+    # วาดรายการสินค้า
+    for i, row in prod_df.iterrows():
+        q = str(row["standard_question_th"]).strip()
+        if not q:
+            continue
+        checked = st.checkbox(q, key=f"{prod_prefix}_{i}")
+        if checked:
+            qty = st.number_input(
+                f"🔢 จำนวน: {q}",
+                min_value=1, max_value=20, value=1, step=1,
+                key=f"{prod_prefix}_qty_{i}"
+            )
+            selected_products.append({"name": q, "qty": qty})
+    
+
+    # แล้วค่อย Product & Details
+    st.markdown("<div class='heading-lg' style='text-decoration: underline;'>🧾 Product & Details</div>", unsafe_allow_html=True)
+    for i, row in sheets_data["Product & Details"].iterrows():
+        q = str(row["standard_question_th"])
+        if pd.notna(q) and q.strip():
+            if st.checkbox(q, key=f"detail_{i}"):
+                selected_details.append(q.strip())
+
+    with st.expander("➕ เพิ่มคำถามเกี่ยวกับสินค้า (Product Details)"):
+        custom_detail = st.text_input("กรอกคำถามเกี่ยวกับสินค้า", key="custom_detail_input")
+        if st.button("➕ เพิ่มคำถามเกี่ยวกับสินค้า"):
+            if custom_detail.strip():
+                st.session_state.custom_product_details.append(custom_detail.strip())
+                st.success(f"✅ เพิ่มคำถามสินค้า \"{custom_detail.strip()}\" แล้วเรียบร้อย")
+                st.info("หากต้องการเพิ่มคำถามอื่นๆ สามารถกรอกและกด 'เพิ่มคำถามเกี่ยวกับสินค้า' ได้เลย")
+            else:
+                st.warning("กรุณากรอกคำถาม")
+
+# เติม custom product details เข้าไป
+selected_details += st.session_state.custom_product_details
+
 # ✍️ Custom Questions (ยังอยู่หลังกลุ่มมาตรฐาน)
-with st.expander("✍️ เพิ่มคำถามเอง (Custom Questions) กดที่นี่"):
+st.subheader("✍️ เพิ่มคำถามเอง ")
+with st.expander("✍️ เพิ่มคำถามเอง กดที่นี่"):
     custom_q = st.text_input("กรอกคำถามที่ต้องการเพิ่ม", key="custom_question_input")
-    custom_q_qty = st.number_input("จำนวนที่ต้องการ Repeat ", 1, 20, 1, 1, key="custom_question_qty")
+    custom_q_qty = st.number_input("จำนวน Column ที่ต้องการ", 1, 20, 1, 1, key="custom_question_qty")
     custom_q_group = st.selectbox(
-        "เลือกกลุ่มคำถามสำหรับคำถามใหม่ (q_group)",
-        options=[
-            "BUSINESS_TYPE",
+        "เพิ่มคำถามนี้ในกลุ่มใด? (q_group)",
+        options=[            
             "Respondent Profile",
             "Customer & Market",
+            "Customer's Journey",
             "Business & Strategy",
             "Pain Points & Needs",
             "Product & Process",
             "Product & Details",
-            "Special Topic",
-            "อื่นๆ"
+            "Special Topic"            
         ],
         index=1,
         key="custom_question_group"
@@ -539,9 +608,10 @@ with st.expander("✍️ เพิ่มคำถามเอง (Custom Questio
             st.session_state.custom_questions.append({
                 "Question": custom_q.strip(),
                 "Quantity": custom_q_qty,
-                "Group": custom_q_group if custom_q_group != "อื่นๆ" else "N/A"
+                "Group": custom_q_group
             })
             st.success(f"✅ เพิ่มคำถาม \"{custom_q.strip()}\" เข้า group \"{custom_q_group}\" แล้ว!")
+            st.info("หากต้องการเพิ่มคำถามอื่นๆ สามารถกรอกและกด 'เพิ่มคำถามนี้' ได้เลย")
         else:
             st.warning("กรุณากรอกคำถาม")
 
@@ -552,40 +622,6 @@ for item in st.session_state.custom_questions:
         "Quantity": item["Quantity"],
         "Group": item.get("Group", "N/A")
     })
-
-# —— หลังจากนั้นค่อย “กลุ่ม Product สำหรับ cross” ——
-selected_products, selected_details = [], []
-if is_cross:
-    st.subheader("🧩 กลุ่ม Product List")
-
-    # Product List มาก่อน
-    st.markdown("**📦 Product List**")
-    for i, row in sheets_data["Product List"].iterrows():
-        q = str(row["standard_question_th"])
-        if pd.notna(q) and q.strip():
-            if st.checkbox(q, key=f"prod_{i}"):
-                qty = st.number_input(f"🔢 จำนวน: {q}", 1, 20, 1, 1, key=f"qty_{i}")
-                selected_products.append({"name": q.strip(), "qty": qty})
-
-    # แล้วค่อย Product & Details
-    st.markdown("**🧾 Product & Details**")
-    for i, row in sheets_data["Product & Details"].iterrows():
-        q = str(row["standard_question_th"])
-        if pd.notna(q) and q.strip():
-            if st.checkbox(q, key=f"detail_{i}"):
-                selected_details.append(q.strip())
-
-    with st.expander("➕ เพิ่มคำถามเกี่ยวกับสินค้า (Custom Product Details)"):
-        custom_detail = st.text_input("กรอกคำถามเกี่ยวกับสินค้า", key="custom_detail_input")
-        if st.button("➕ เพิ่มคำถามเกี่ยวกับสินค้า"):
-            if custom_detail.strip():
-                st.session_state.custom_product_details.append(custom_detail.strip())
-                st.success(f"✅ เพิ่มคำถามสินค้า \"{custom_detail.strip()}\" แล้วเรียบร้อย")
-            else:
-                st.warning("กรุณากรอกคำถาม")
-
-# เติม custom product details เข้าไป
-selected_details += st.session_state.custom_product_details
 
 
 # =========================
@@ -737,6 +773,5 @@ if st.button("📅 สร้างและดาวน์โหลด Excel + P
     # ✅ Preview Excel แนวตั้งใน Streamlit
     st.markdown("### 📋 ตัวอย่าง (Excel แนวตั้ง)")
     st.dataframe(df_vertical.head(10))
-
 
 
