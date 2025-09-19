@@ -238,7 +238,6 @@ QUESTION_BANK = {
             {"standard_question_th": "ปัจจัยสำคัญของการผลิต", "q_group": "Product & Process"},            
         ],   
         "Product List": [
-            {"standard_question_th": "ก่อฉาบเท-Grey", "q_group": "Product & Details"},
             {"standard_question_th": "ก่อ-Grey", "q_group": "Product & Details"},
             {"standard_question_th": "ก่อ-Mortar", "q_group": "Product & Details"},
             {"standard_question_th": "ก่อ-Mortar-LW", "q_group": "Product & Details"},
@@ -253,7 +252,6 @@ QUESTION_BANK = {
             {"standard_question_th": "เทโครงสร้าง-RMC", "q_group": "Product & Details"},
             {"standard_question_th": "เทเสาเอ็น-Grey", "q_group": "Product & Details"},
             {"standard_question_th": "เทเสาเอ็น-Mortar", "q_group": "Product & Details"},
-            {"standard_question_th": "เทเสาเอ็น-RMC", "q_group": "Product & Details"},
             {"standard_question_th": "เทปรับพื้น-Grey", "q_group": "Product & Details"},
             {"standard_question_th": "เทปรับพื้น-Mortar", "q_group": "Product & Details"},
             {"standard_question_th": "เทปรับพื้น-RMC", "q_group": "Product & Details"},
@@ -355,7 +353,6 @@ QUESTION_BANK = {
         ],
         # Contractor อาจไม่มี cross-product ก็ได้ — ถ้าไม่มี ก็ลบสองชีตนี้ออก
         "Product List": [
-            {"standard_question_th": "ก่อฉาบเท-Grey", "q_group": "Product & Details"},
             {"standard_question_th": "ก่อ-Grey", "q_group": "Product & Details"},
             {"standard_question_th": "ก่อ-Mortar", "q_group": "Product & Details"},
             {"standard_question_th": "ก่อ-Mortar-LW", "q_group": "Product & Details"},
@@ -370,7 +367,6 @@ QUESTION_BANK = {
             {"standard_question_th": "เทโครงสร้าง-RMC", "q_group": "Product & Details"},
             {"standard_question_th": "เทเสาเอ็น-Grey", "q_group": "Product & Details"},
             {"standard_question_th": "เทเสาเอ็น-Mortar", "q_group": "Product & Details"},
-            {"standard_question_th": "เทเสาเอ็น-RMC", "q_group": "Product & Details"},
             {"standard_question_th": "เทปรับพื้น-Grey", "q_group": "Product & Details"},
             {"standard_question_th": "เทปรับพื้น-Mortar", "q_group": "Product & Details"},
             {"standard_question_th": "เทปรับพื้น-RMC", "q_group": "Product & Details"},
@@ -1038,5 +1034,6 @@ if st.button("📅 สร้างและดาวน์โหลด Excel + P
         file_name="survey_google_sheets.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
 
 
