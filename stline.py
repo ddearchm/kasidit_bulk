@@ -394,6 +394,7 @@ QUESTION_BANK = {
          "Respondent Profile": [
             {"standard_question_th": "ชื่อ", "q_group": "Respondent Profile"},
             {"standard_question_th": "ชื่อเล่น", "q_group": "Respondent Profile"},
+            {"standard_question_th": "เบอร์โทร", "q_group": "Respondent Profile"},
             {"standard_question_th": "เพศ", "q_group": "Respondent Profile"},
             {"standard_question_th": "อายุ", "q_group": "Respondent Profile"},
             {"standard_question_th": "ตำแหน่ง", "q_group": "Respondent Profile"},
@@ -1188,6 +1189,7 @@ if st.button("📅 สร้างและดาวน์โหลด Excel + P
 
 
     
+
 
 
 
