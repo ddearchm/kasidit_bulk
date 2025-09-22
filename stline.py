@@ -12,7 +12,117 @@ from rapidfuzz import fuzz
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.workbook.defined_name import DefinedName
+from datetime import datetime
+from google.oauth2.service_account import Credentials
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaIoBaseUpload
+from googleapiclient.errors import HttpError
+import io
+import json
 
+# === CONFIG: กำหนดโฟลเดอร์ปลายทางบน Google Drive ===
+FOLDER_ID = "1jBOz2MHYzzpwKZ18K2X5AUNegA7dgw3z"  # <-- ใส่เฉพาะ ID ไม่ใช่ทั้ง URL
+
+
+# ===== ตรวจ secrets ก่อนใช้ Google API =====
+if "gcp_service_account" not in st.secrets:
+    st.warning(
+        "⚠️ ยังไม่พบค่า gcp_service_account ใน secrets.toml\n"
+        "โปรดสร้างไฟล์ ~/.streamlit/secrets.toml หรือ <proj>/.streamlit/secrets.toml ให้เรียบร้อยก่อนใช้งานส่วน Google Drive"
+    )
+
+
+#=======================================================================================================
+#def extract_folder
+#=======================================================================================================
+def extract_folder_id(s: str) -> str | None:
+    if not s:
+        return None
+    s = s.strip()
+    # ถ้าเป็น ID เปล่า (ไม่ใช่ URL) ก็คืนเลย
+    if "/" not in s and "drive.google.com" not in s:
+        return s
+    m = re.search(r"/folders/([A-Za-z0-9_\-]+)", s)
+    return m.group(1) if m else None
+#=======================================================================================================
+# set helper สำหรับอัปขึ้น Google Sheets + แชร์สิทธิ์ 
+#=======================================================================================================
+def upload_excel_as_google_sheet(excel_bytes: bytes, title: str, parent_folder_id: str | None = None):
+    scopes = ["https://www.googleapis.com/auth/drive"]
+    creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"], scopes=scopes)
+    drive = build("drive", "v3", credentials=creds)
+
+    # (A) ตรวจโฟลเดอร์ปลายทางก่อน (จะได้รู้เลยว่าเข้าถึงได้ไหม)
+    if parent_folder_id:
+        try:
+            meta = drive.files().get(
+                fileId=parent_folder_id,
+                fields="id, name, mimeType, driveId, parents",
+                supportsAllDrives=True,
+            ).execute()
+            # โฟลเดอร์ต้องเป็น Google Drive folder
+            if meta.get("mimeType") not in ("application/vnd.google-apps.folder",):
+                raise RuntimeError(f"ปลายทางไม่ใช่โฟลเดอร์: mimeType={meta.get('mimeType')}")
+        except HttpError as e:
+            # พ่นรายละเอียดออกมาเพื่อแยก 404 (ID ผิด/ไม่มีสิทธิ์) vs 403 (ไม่มีสิทธิ์)
+            st.error(f"[CHECK FOLDER] Drive error: {e}")
+            try:
+                st.code(json.loads(e.content.decode()).get("error", {}), language="json")
+            except Exception:
+                pass
+            raise  # ขึ้นต่อให้เห็นบนสแต็ค
+
+    media = MediaIoBaseUpload(
+        io.BytesIO(excel_bytes),
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        resumable=False,
+    )
+
+    metadata = {
+        "name": title,
+        "mimeType": "application/vnd.google-apps.spreadsheet",  # ให้แปลงเป็น Google Sheet
+    }
+    if parent_folder_id:
+        metadata["parents"] = [parent_folder_id]
+
+    try:
+        created = drive.files().create(
+            body=metadata,
+            media_body=media,
+            fields="id, webViewLink, parents",
+            supportsAllDrives=True,   # สำคัญกับ Shared drive
+        ).execute()
+        return created["id"], f"https://docs.google.com/spreadsheets/d/{created['id']}/edit"
+    except HttpError as e:
+        st.error(f"[UPLOAD] Drive error: {e}")
+        try:
+            st.code(json.loads(e.content.decode()).get("error", {}), language="json")
+        except Exception:
+            pass
+        raise
+
+def share_to_user(file_id: str, email: str, role: str = "writer"):
+    creds = Credentials.from_service_account_info(
+        st.secrets["gcp_service_account"],
+        scopes=["https://www.googleapis.com/auth/drive"]
+    )
+    drive = build("drive", "v3", credentials=creds)
+
+    drive.permissions().create(
+        fileId=file_id,
+        body={
+            "type": "user",
+            "role": role,
+            "emailAddress": email
+        },
+        sendNotificationEmail=False  # จะให้ Google ส่งอีเมลแจ้งเตือนก็เปลี่ยนเป็น True
+    ).execute()
+#=======================================================================================================
+
+
+#=======================================================================================================
+# set Web App Page
+#=======================================================================================================
 st.set_page_config(page_title="Survey Column Builder", layout="wide")
 st.title("📋 สร้างแบบสอบถาม (Excel และ PDF)")
 
@@ -622,6 +732,16 @@ for item in st.session_state.custom_questions:
         "Group": item.get("Group", "N/A")
     })
 
+#==============================================================================
+# Export to Google Sheets (ต้องใส่ก่อนสร้างและโหลด excel+pdf)
+#==============================================================================
+st.subheader("☁️ Google Sheets Export (อัตโนมัติหลัง Export)")
+auto_to_gs = st.checkbox("สร้าง Google Sheet อัตโนมัติหลัง Export", value=True)
+gs_folder_id = st.text_input("Drive Folder ID (ปล่อยว่าง = My Drive)", value="")
+gs_share_emails = st.text_input("แชร์สิทธิ์ให้ (อีเมลคั่นด้วย , )", value="")
+#==============================================================================
+
+
 
 # =========================
 #   GENERATE EXPORT
@@ -1036,6 +1156,38 @@ if st.button("📅 สร้างและดาวน์โหลด Excel + P
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
 
+    # === อัปโหลดเป็น Google Sheet อัตโนมัติ (ถ้าติ้ก) ===
+    if auto_to_gs:
+        # 3.1 ตีความ Folder ID จากอินพุตก่อน (ถ้าไม่กรอก ใช้ FOLDER_ID สำรอง; ถ้าไม่มีทั้งคู่ = None → My Drive)
+        parent_id = extract_folder_id(gs_folder_id) or extract_folder_id(FOLDER_ID) or None
+
+        # 3.2 อัปโหลด + ดีบัก error ให้เห็น reason ชัด ๆ
+        try:
+            excel_bytes_for_gs = gs_buffer.getvalue()
+            title = f"Survey_{biz}_{datetime.now().strftime('%Y%m%d_%H%M')}"
+            sheet_id, sheet_url = upload_excel_as_google_sheet(
+                excel_bytes_for_gs,
+                title,
+                parent_folder_id=parent_id,
+            )
+
+            # 3.3 แชร์สิทธิ์ (คั่นด้วย ,)
+            emails = [e.strip() for e in gs_share_emails.split(",") if e.strip()]
+            for e in emails:
+                share_to_user(sheet_id, e, role="writer")
+
+            st.success(f"✅ สร้าง Google Sheet สำเร็จ: {sheet_url}")
+        except Exception as e:
+            st.error(f"❌ สร้าง Google Sheet ไม่สำเร็จ: {e}")
+            from googleapiclient.errors import HttpError
+            if isinstance(e, HttpError):
+                try:
+                    st.code(json.loads(e.content.decode()).get("error", {}), language="json")
+                except Exception:
+                    pass
+
+
+    
 
 
 
