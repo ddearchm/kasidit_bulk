@@ -3,3 +3,7 @@ pandas
 openpyxl
 reportlab
 rapidfuzz
+google-api-python-client
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
